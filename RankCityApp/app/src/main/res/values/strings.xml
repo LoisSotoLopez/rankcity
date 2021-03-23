@@ -3,4 +3,15 @@
     <string name="title_home">Home</string>
     <string name="title_leaderboard">Leaderboard</string>
     <string name="title_profile">Profile</string>
+    <string name="user_name_input_placeholder">User name</string>
+    <string name="password_input_placeholder">Password</string>
+    <string name="login_button_text">LOG IN</string>
+    <string name="register_button_text">REGISTER</string>
+    <string name="to_google_login_button_text">LOG IN WITH GOOGLE</string>
+    <string name="app_logo_description_text">application logo</string>
+    <string name="start_button_text">LETS WALK</string>
+    <string name="user_avatar_description_text">user avatar</string>
+    <string name="to_profile_button">MY PROFILE</string>
+    <string name="to_leaderboards_button">LEADERBOARDS</string>
+    <string name="to_configuration_button">CONFIGURATION</string>
 </resources>
