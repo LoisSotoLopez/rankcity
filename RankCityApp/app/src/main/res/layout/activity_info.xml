@@ -5,7 +5,6 @@
     style="@style/NameStyle"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="@dimen/layout_margin"
     android:background="@color/main_background"
     android:gravity="center_horizontal"
     android:orientation="vertical"
