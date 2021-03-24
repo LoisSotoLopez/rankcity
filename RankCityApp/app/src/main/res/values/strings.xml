@@ -14,4 +14,11 @@
     <string name="to_profile_button">MY PROFILE</string>
     <string name="to_leaderboards_button">LEADERBOARDS</string>
     <string name="to_configuration_button">CONFIGURATION</string>
+    <string name="congratulations">CONGRATULATIONS!</string>
+    <string name="score">SCORE</string>
+    <string name="time">TIME</string>
+    <string name="share_menu">Share Menu</string>
+    <string name="main_menu">Main Menu</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="pause_button">pause button</string>
 </resources>
