@@ -21,4 +21,6 @@
     <string name="main_menu">Main Menu</string>
     <string name="title_activity_maps">Map</string>
     <string name="pause_button">pause button</string>
+    <string name="user_score">score</string>
+    <string name="periodo">Periodo</string>
 </resources>
