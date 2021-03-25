@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/main_background"
     tools:context=".MainActivity">
     <!--
     tools:context=".ui.home.HomeFragment">
@@ -42,10 +43,11 @@
         android:gravity="center_horizontal"
         android:text="¡Bienvenido!"
         android:textAlignment="center"
+        android:textColor="@color/purple_700"
         android:textSize="36sp"
         app:layout_constraintBottom_toTopOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -55,6 +57,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="60dp"
         android:text="Empezar"
+        android:textColor="@color/button_text"
+        app:backgroundTint="@color/button_primary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
