@@ -19,5 +19,17 @@ class LoginActivity : AppCompatActivity() {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
+
+        val registerButton = findViewById<Button>(R.id.registerButton);
+        // set on-click listener
+        registerButton.setOnClickListener {
+            Toast.makeText(this, "Registered", Toast.LENGTH_SHORT).show()
+        }
+
+        val loginButtonGoogle = findViewById<Button>(R.id.loginButtonGoogle);
+        // set on-click listener
+        loginButtonGoogle.setOnClickListener {
+            Toast.makeText(this, "Login with GOOGLE", Toast.LENGTH_SHORT).show()
+        }
     }
 }
