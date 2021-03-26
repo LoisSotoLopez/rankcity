@@ -84,7 +84,7 @@
         android:paddingTop="@dimen/info_padding">
 
         <Button
-            android:id="@+id/button_share"
+            android:id="@+id/buttonShare"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -95,12 +95,12 @@
             app:iconTint="@color/button_text" />
 
         <Button
-            android:id="@+id/button_menu"
+            android:id="@+id/buttonBackHome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             app:backgroundTint="@color/button_primary"
-            app:icon="@android:drawable/ic_menu_sort_by_size"
+            app:icon="@drawable/ic_home"
             app:iconGravity="top"
             app:iconSize="60sp"
             app:iconTint="@color/button_text" />
