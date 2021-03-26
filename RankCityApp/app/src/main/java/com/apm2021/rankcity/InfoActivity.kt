@@ -19,5 +19,11 @@ class InfoActivity : AppCompatActivity() {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
+
+        val shareButton = findViewById<Button>(R.id.buttonShare);
+        // set on-click listener
+        shareButton.setOnClickListener {
+            Toast.makeText(this, "Share route", Toast.LENGTH_SHORT).show()
+        }
     }
 }
