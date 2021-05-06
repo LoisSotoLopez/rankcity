@@ -4,10 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.apm2021.rankcity.R
 
 class LeaderboardFragment : Fragment() {
@@ -19,13 +18,22 @@ class LeaderboardFragment : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        leaderboardViewModel =
-                ViewModelProvider(this).get(LeaderboardViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_leaderboard, container, false)
-        /*val textView: TextView = root.findViewById(R.id.text_dashboard)
-        leaderboardViewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
-        })*/
-        return root
+        return inflater.inflate(R.layout.fragment_leaderboard, container, false)
+    }
+
+    override fun onViewCreated(itemView: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(itemView, savedInstanceState)
+
+        val usersList = Datasource_Leaderboard(this).getUsersList()
+
+
+        val recyclerView = itemView.findViewById<RecyclerView>(R.id.recycler_view)
+        recyclerView.apply {
+            // set a LinearLayoutManager to handle Android
+            // RecyclerView behavior
+            layoutManager = LinearLayoutManager(activity)
+            // set the custom adapter to the RecyclerView
+            adapter = LeaderboardAdapter(usersList)
+        }
     }
 }
