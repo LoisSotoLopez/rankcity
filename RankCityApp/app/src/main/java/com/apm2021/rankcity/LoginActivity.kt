@@ -90,8 +90,8 @@ class LoginActivity : AppCompatActivity() {
             FirebaseAuth.getInstance().createUserWithEmailAndPassword(
                     name,
                     pass).addOnCompleteListener {
-
-                if (it.isSuccessful && postUser(name)) {
+                //if (it.isSuccessful && postUser(name)) { %TODO: Add user entry on backend
+                if (it.isSuccessful && true) {
                     showMain(it.result?.user?.email ?: "", ProviderType.BASIC )
                 } else {
                     showAlert("No se pudo registrar")
@@ -120,7 +120,7 @@ class LoginActivity : AppCompatActivity() {
                 pass
             ).addOnCompleteListener {
                 if (it.isSuccessful) {
-                    val triple = getUser(name); // Retrieve required info here
+                    val triple = getUser(name); // TODO Retrieve required info here
                     showMain(it.result?.user?.email ?: "", ProviderType.BASIC)
                 } else {
                     showAlert("No se pudo loguear")
