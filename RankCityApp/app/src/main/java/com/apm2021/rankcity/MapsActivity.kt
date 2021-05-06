@@ -14,6 +14,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -32,6 +34,20 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val stopButton = findViewById<Button>(R.id.stopRouteButton) as FloatingActionButton;
         // set on-click listener
         stopButton.setOnClickListener {
+            GlobalScope.launch {
+                println("Llamada API, POST para añadir nueva ruta")
+                /**val conn = URL("http://localhost:5000/routes").openConnection() as HttpURLConnection
+                conn.requestMethod = "POST"
+                conn.connectTimeout = 300000
+                conn.doOutput = true
+                val message = " {\n" +
+                "                \"route\": " + routeid +",\n" +
+                "                \"title\": " + title +",\n" +
+                "                \"date\": " + date +"\n" +
+                "                \"user\": " + userid +",\n" +
+                "                \"score\": " + score +",\n" +
+                "            }"*/
+            }
             Toast.makeText(this, "Route finished", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, InfoActivity::class.java)
             startActivity(intent)
