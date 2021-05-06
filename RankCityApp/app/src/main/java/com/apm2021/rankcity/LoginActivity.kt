@@ -120,7 +120,7 @@ class LoginActivity : AppCompatActivity() {
                 pass
             ).addOnCompleteListener {
                 if (it.isSuccessful) {
-                    val triple = getUser(name); // TODO Retrieve required info here
+                    //val triple = getUser(name); // TODO Retrieve required info here
                     showMain(it.result?.user?.email ?: "", ProviderType.BASIC)
                 } else {
                     showAlert("No se pudo loguear")

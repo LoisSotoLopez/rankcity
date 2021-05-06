@@ -22,14 +22,14 @@
 
         <ImageView
             android:id="@+id/card_user_icon"
-            android:layout_width="57dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
             card_view:srcCompat="@drawable/ic_home" />
 
         <TextView
             android:id="@+id/card_user_date"
-            android:layout_width="166dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Fecha" />
