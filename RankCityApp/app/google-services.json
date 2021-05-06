@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "686697245796",
+    "project_id": "rankcity-1618649605471",
+    "storage_bucket": "rankcity-1618649605471.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:686697245796:android:1de33dacc8a7618e9c0371",
+        "android_client_info": {
+          "package_name": "com.apm2021.rankcity"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "686697245796-r851gnmfvkv74766861ce5ivivpfl7g7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCe4wuFNo2TXd03_7o6lRRyrmJOggInrY4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "686697245796-5dh6clidpfi76guohfo3epp3mf8krk4c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
