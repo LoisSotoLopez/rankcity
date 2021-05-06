@@ -14,21 +14,30 @@ import com.apm2021.rankcity.R
 
 class ProfileFragment : Fragment() {
 
-    private lateinit var profileViewModel: ProfileViewModel
-    private lateinit var linearLayoutManager: LinearLayoutManager
-
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        profileViewModel =
-                ViewModelProvider(this).get(ProfileViewModel::class.java)
+        return inflater.inflate(R.layout.fragment_profile, container, false)
+    }
+
+    override fun onViewCreated(itemView: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(itemView, savedInstanceState)
+
+        val datesList = Datasource_Profile(this).getDatesList()
 
 
-        val root = inflater.inflate(R.layout.fragment_profile, container, false)
-        return root
+        val recyclerView = itemView.findViewById<RecyclerView>(R.id.recycler_view)
+        //GlobalScope.launch {
+        recyclerView.apply {
+            // set a LinearLayoutManager to handle Android
+            // RecyclerView behavior
+            layoutManager = LinearLayoutManager(activity)
+            // set the custom adapter to the RecyclerView
+            adapter = ProfileAdapter(datesList)
+        }
+        //}
     }
 
 }

@@ -1,4 +1,4 @@
-package com.apm2021.rankcity.ui.leaderboard
+package com.apm2021.rankcity.ui.profile
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,12 +7,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.apm2021.rankcity.R
 
-class LeaderboardAdapter(val routesList: Array<String>) :
-        RecyclerView.Adapter<LeaderboardAdapter.LeaderboardViewHolder>() {
+class ProfileAdapter(val routesList: Array<String>) :
+        RecyclerView.Adapter<ProfileAdapter.ProfileViewHolder>() {
 
     // Describes an item view and its place within the RecyclerView
-    class LeaderboardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val flowerTextView: TextView = itemView.findViewById(R.id.card_user_name)
+    class ProfileViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val flowerTextView: TextView = itemView.findViewById(R.id.card_user_date)
 
         fun bind(word: String) {
             flowerTextView.text = word
@@ -20,11 +20,11 @@ class LeaderboardAdapter(val routesList: Array<String>) :
     }
 
     // Returns a new ViewHolder
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LeaderboardViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProfileViewHolder {
         val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_leaderboard, parent, false)
+                .inflate(R.layout.item_profile, parent, false)
 
-        return LeaderboardViewHolder(view)
+        return ProfileViewHolder(view)
     }
 
     // Returns size of data list
@@ -33,7 +33,7 @@ class LeaderboardAdapter(val routesList: Array<String>) :
     }
 
     // Displays data at a certain position
-    override fun onBindViewHolder(holder: LeaderboardViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ProfileViewHolder, position: Int) {
         holder.bind(routesList[position])
     }
 }

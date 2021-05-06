@@ -7,7 +7,7 @@
     android:layout_marginTop="12dp"
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
-    android:id="@+id/item_leaderboard"
+    android:id="@+id/item_profile"
     card_view:cardBackgroundColor="#FFFF"
     card_view:cardCornerRadius="8dp"
     card_view:contentPadding="10dp"
@@ -22,21 +22,14 @@
 
         <ImageView
             android:id="@+id/card_user_icon"
-            android:layout_width="wrap_content"
+            android:layout_width="57dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            card_view:srcCompat="@drawable/ic_profile" />
-
-        <TextView
-            android:id="@+id/card_user_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Usuario" />
+            card_view:srcCompat="@drawable/ic_home" />
 
         <TextView
             android:id="@+id/card_user_date"
-            android:layout_width="wrap_content"
+            android:layout_width="166dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Fecha" />

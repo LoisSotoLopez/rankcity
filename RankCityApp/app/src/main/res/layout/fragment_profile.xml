@@ -7,38 +7,6 @@
     android:background="@color/main_background"
     tools:context=".ui.profile.ProfileFragment">
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/startRouteButton">
-
-        <include
-            android:id="@+id/include2"
-            layout="@layout/item_leaderboard" />
-
-        <include
-            android:id="@+id/include2"
-            layout="@layout/item_leaderboard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <include
-            android:id="@+id/include2"
-            layout="@layout/item_leaderboard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <include
-            android:id="@+id/include2"
-            layout="@layout/item_leaderboard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
 
     <TextView
         android:id="@+id/textView2"
@@ -134,7 +102,7 @@
         tools:listitem="@android:layout/expandable_list_content" />
      -->
     <Button
-        android:id="@+id/startRouteButton"
+        android:id="@+id/period_change"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/button_primary"
@@ -142,5 +110,12 @@
         android:textColor="@color/button_text"
         app:backgroundTint="@color/button_primary"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="409dp"
+        android:layout_height="341dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/period_change" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

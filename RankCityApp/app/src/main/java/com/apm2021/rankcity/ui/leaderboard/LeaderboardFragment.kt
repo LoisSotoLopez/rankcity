@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.apm2021.rankcity.R
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class LeaderboardFragment : Fragment() {
 
@@ -28,12 +30,14 @@ class LeaderboardFragment : Fragment() {
 
 
         val recyclerView = itemView.findViewById<RecyclerView>(R.id.recycler_view)
-        recyclerView.apply {
-            // set a LinearLayoutManager to handle Android
-            // RecyclerView behavior
-            layoutManager = LinearLayoutManager(activity)
-            // set the custom adapter to the RecyclerView
-            adapter = LeaderboardAdapter(usersList)
-        }
+        //GlobalScope.launch {
+            recyclerView.apply {
+                // set a LinearLayoutManager to handle Android
+                // RecyclerView behavior
+                layoutManager = LinearLayoutManager(activity)
+                // set the custom adapter to the RecyclerView
+                adapter = LeaderboardAdapter(usersList)
+            }
+        //}
     }
 }

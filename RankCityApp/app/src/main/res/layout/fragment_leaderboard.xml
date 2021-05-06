@@ -6,8 +6,7 @@
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:background="@color/main_background"
-    tools:context=".leaderboard.">
+    android:background="@color/main_background">
 
     <TextView
         android:id="@+id/text_dashboard"
@@ -19,7 +18,7 @@
         android:textColor="@color/black"/>
 
     <Button
-        android:id="@+id/startRouteButton"
+        android:id="@+id/period_change"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/button_primary"
