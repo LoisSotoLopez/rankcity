@@ -51,21 +51,21 @@ class LoginActivity : AppCompatActivity() {
 
     private fun setup() {
 
-        val nameInputText = findViewById<TextInputEditText>(R.id.UserEmailInputText);
-        val passInputText = findViewById<TextInputEditText>(R.id.PasswordInputText);
+        val nameInputText = findViewById<TextInputEditText>(R.id.UserEmailInputText)
+        val passInputText = findViewById<TextInputEditText>(R.id.PasswordInputText)
         // Pulsar boton login nos lleva al inicio de la app
-        val loginButton = findViewById<Button>(R.id.loginButton);
+        val loginButton = findViewById<Button>(R.id.loginButton)
 
         // set on-click listener
         loginButton.setOnClickListener {
             if (nameInputText.text?.isNotEmpty() == true && passInputText.text?.isNotEmpty() == true) {
-                loginCoroutine(nameInputText.text.toString(), passInputText.text.toString());
+                loginCoroutine(nameInputText.text.toString(), passInputText.text.toString())
             } else {
                 Toast.makeText(this, "Missing User/Password", Toast.LENGTH_SHORT).show()
             }
         }
 
-        val registerButton = findViewById<Button>(R.id.registerButton);
+        val registerButton = findViewById<Button>(R.id.registerButton)
         // set on-click listener
         registerButton.setOnClickListener {
             if (nameInputText.text?.isNotEmpty() == true && passInputText.text?.isNotEmpty() == true) {
@@ -76,7 +76,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
 
-        val loginButtonGoogle = findViewById<Button>(R.id.loginButtonGoogle);
+        val loginButtonGoogle = findViewById<Button>(R.id.loginButtonGoogle)
 
         // set on-click listener
         loginButtonGoogle.setOnClickListener {
@@ -131,7 +131,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        val loginLayout = findViewById<LinearLayout>(R.id.loginLayout);
+        val loginLayout = findViewById<LinearLayout>(R.id.loginLayout)
         loginLayout.visibility = View.VISIBLE
     }
 
@@ -139,7 +139,7 @@ class LoginActivity : AppCompatActivity() {
         val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
         val email = prefs.getString("email", null)
         val provider = prefs.getString("provider", null)
-        val loginLayout = findViewById<LinearLayout>(R.id.loginLayout);
+        val loginLayout = findViewById<LinearLayout>(R.id.loginLayout)
 
         if (email != null && provider != null) {
             loginLayout.visibility = View.INVISIBLE

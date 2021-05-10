@@ -31,7 +31,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
 
         // Pulsar boton stop nos lleva a InfoActivity
-        val stopButton = findViewById<Button>(R.id.stopRouteButton) as FloatingActionButton;
+        val stopButton = findViewById<Button>(R.id.stopRouteButton) as FloatingActionButton
         // set on-click listener
         stopButton.setOnClickListener {
             GlobalScope.launch {
