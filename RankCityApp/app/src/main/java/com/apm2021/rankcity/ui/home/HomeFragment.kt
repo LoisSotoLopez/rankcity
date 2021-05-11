@@ -68,10 +68,14 @@ class HomeFragment : Fragment() {
             )
         ) {
             //El usuario ya ha rechazado el permiso anteriormente, debemos informarle que vaya a ajustes.
+                // Por ahora seguiremos mostrando la notificación para dar la posibilidad de aceptar los permisos
+            requestPermissions(
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                777
+            )
         } else {
             //El usuario nunca ha aceptado ni rechazado, así que le pedimos que acepte el permiso.
-            ActivityCompat.requestPermissions(
-                requireActivity(),
+            requestPermissions(
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 777
             )
