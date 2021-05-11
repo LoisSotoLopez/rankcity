@@ -98,7 +98,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                                 it.result!!.longitude
                             )
                             mMap.isMyLocationEnabled = true
-                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 15f))
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 17f))
                         }
                     }
                 })
@@ -149,12 +149,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
      */
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        mMap.uiSettings.isZoomControlsEnabled = true
 
-        val coruna = LatLng(43.371926604109944, -8.403665934971855)
-        mMap.addMarker(MarkerOptions().position(coruna).title("A Coruña").snippet("Playa de Orzán"))
-
-        val user = LatLng(43.36704038404932, -8.40577771078702)
-//        mMap.addMarker(MarkerOptions().position(user).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher_foreground)))
+//        Add in future iterations markers for favourites streets
+//        val coruna = LatLng(43.371926604109944, -8.403665934971855)
+//        mMap.addMarker(MarkerOptions().position(coruna).title("A Coruña").snippet("Playa de Orzán"))
 
         if (checkPermissions() && enable_ubication) {
             if (ActivityCompat.checkSelfPermission(
@@ -177,7 +176,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             mMap.isMyLocationEnabled = true
         }
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(user, 15.8F))
+//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(user, 15.8F))
     }
 
     private fun checkPermissions() =
