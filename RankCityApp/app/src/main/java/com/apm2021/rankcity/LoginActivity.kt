@@ -23,6 +23,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.json.JSONException
@@ -85,11 +86,15 @@ class LoginActivity : AppCompatActivity() {
     }
 
 
-    private fun signInCoroutine(name: String, pass: String){
-        GlobalScope.launch {
+    private fun signInCoroutine(name: String, pass: String)=runBlocking{
+        signIn(name, pass)
+    }
+
+    suspend fun signIn(name: String, pass: String)=coroutineScope {
+        launch {
             FirebaseAuth.getInstance().createUserWithEmailAndPassword(
-                    name,
-                    pass).addOnCompleteListener {
+                name,
+                pass).addOnCompleteListener {
                 //if (it.isSuccessful && postUser(name)) { %TODO: Add user entry on backend
                 if (it.isSuccessful && true) {
                     showMain(it.result?.user?.email ?: "", ProviderType.BASIC )
@@ -100,12 +105,16 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun googleLoginCoroutine(activity: Activity) {
-        GlobalScope.launch {
+    private fun googleLoginCoroutine(activity: Activity)=runBlocking {
+        googleLogin(activity)
+    }
+
+    suspend fun googleLogin(activity: Activity)=coroutineScope {
+        launch{
             val googleConf = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    .requestIdToken(getString(R.string.default_web_client_id))
-                    .requestEmail()
-                    .build()
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
 
             val googleClient = GoogleSignIn.getClient(activity, googleConf)
             googleClient.signOut()
@@ -113,8 +122,12 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun loginCoroutine(name: String, pass: String) {
-        GlobalScope.launch {
+    private fun loginCoroutine(name: String, pass: String)=runBlocking {
+        login(name, pass)
+    }
+
+    suspend fun login(name: String, pass: String)=coroutineScope{
+        launch {
             FirebaseAuth.getInstance().signInWithEmailAndPassword(
                 name,
                 pass
