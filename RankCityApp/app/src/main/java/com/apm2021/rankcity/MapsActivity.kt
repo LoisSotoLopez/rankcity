@@ -2,6 +2,8 @@ package com.apm2021.rankcity
 
 import android.Manifest
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.annotation.SuppressLint
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
@@ -9,31 +11,49 @@ import android.location.Location
 import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import com.google.android.gms.location.LocationServices
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import com.google.android.gms.location.*
+import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+typealias Polyline = MutableList<LatLng>
+typealias Polylines = MutableList<Polyline>
+
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     val REQUEST_PERMISSIONS_REQUEST_CODE = 1234
     var enable_ubication = false
+/**var isFirstRun = true
+    lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
+    companion object {
+        val isTracking = MutableLiveData<Boolean>()
+        val pathPoints = MutableLiveData<Polylines>()
+    }
+
+    private fun postInitialValues(){
+        isTracking.postValue(false)
+        pathPoints.postValue(mutableListOf())
+    }*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +63,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+/**postInitialValues()
+        fusedLocationProviderClient = FusedLocationProviderClient(this)
+        isTracking.observe(this, Observer {
+            updateLocationTracking(it)
+        })*/
 
         // Pulsar boton stop nos lleva a InfoActivity
         val stopButton = findViewById<Button>(R.id.stopRouteButton) as FloatingActionButton;
@@ -99,6 +125,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                             )
                             mMap.isMyLocationEnabled = true
                             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 17f))
+                            printPolyline()
                         }
                     }
                 })
@@ -152,8 +179,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.uiSettings.isZoomControlsEnabled = true
 
 //        Add in future iterations markers for favourites streets
-//        val coruna = LatLng(43.371926604109944, -8.403665934971855)
-//        mMap.addMarker(MarkerOptions().position(coruna).title("A Coruña").snippet("Playa de Orzán"))
+        val coruna = LatLng(43.371926604109944, -8.403665934971855)
+        mMap.addMarker(MarkerOptions().position(coruna).title("A Coruña").snippet("Playa de Orzán"))
 
         if (checkPermissions() && enable_ubication) {
             if (ActivityCompat.checkSelfPermission(
@@ -202,4 +229,95 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             startLocationPermissionRequest()
         }
     }
+
+    private fun printPolyline(){
+        val fusedLocationClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                ACCESS_FINE_LOCATION
+            ) != PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PERMISSION_GRANTED
+        ) {
+            return
+        }
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                val location2 = location?.let {
+                    LatLng(
+                        it.latitude,
+                        it.longitude
+                    )
+                }
+
+                val polylineOptions = PolylineOptions().add(location2)
+                    .add(LatLng(43.357426851502325, -8.420553803443909))
+                    .add(LatLng(43.358203023732095, -8.421143889427185))
+                    .add(LatLng(43.35844094388473, -8.421149253845215))
+                    .add(LatLng(43.35891288109901, -8.420151472091675))
+                    .add(LatLng(43.35902598947281, -8.419818878173828))
+                    .add(LatLng(43.35798850476193, -8.419067859649656))
+                    .add(LatLng(43.358815373710975, -8.418735265731812))
+                    .width(13f)
+                    .color(ContextCompat.getColor(this, R.color.button_primary))
+                val polyline = mMap.addPolyline(polylineOptions)
+                polyline.startCap = RoundCap()
+                polyline.endCap = CustomCap(BitmapDescriptorFactory.fromResource(R.drawable.arrow))
+            }
+    }
+
+
+/**private fun addEmptyPolyline() = pathPoints.value?.apply {
+        add(mutableListOf())
+        pathPoints.postValue(this)
+    } ?: pathPoints.postValue(mutableListOf(mutableListOf()))
+
+    val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(result: LocationResult?) {
+            super.onLocationResult(result)
+            if(isTracking.value!!) {
+                result?.locations?.let { locations ->
+                    for(location in locations) {
+                        addPathPoint(location)
+                    }
+                }
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun updateLocationTracking(isTracking: Boolean){
+        if(isTracking){
+            val request = LocationRequest().apply {
+                interval = 5000L
+                fastestInterval = 2000L
+                priority = PRIORITY_HIGH_ACCURACY
+            }
+            fusedLocationProviderClient.requestLocationUpdates(
+                request, locationCallback, Looper.getMainLooper()
+                )
+
+        } else {
+            fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+        }
+    }
+
+    private fun addPathPoint(location: Location?){
+        location?.let {
+            val pos = LatLng(location.latitude, location.longitude)
+            pathPoints.value?.apply {
+                last().add(pos)
+                pathPoints.postValue(this)
+            }
+        }
+    }
+
+    private fun startForegroundService() {
+        addEmptyPolyline()
+        isTracking.postValue(true)
+
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE)
+                as NotificationManager
+    }*/
 }
