@@ -256,7 +256,6 @@ class LoginActivity : AppCompatActivity() {
     private fun resetPreferences() {
         var preferences = applicationContext
             .getSharedPreferences("com.apm2021.rankcity", Context.MODE_PRIVATE)
-        preferences.edit().putBoolean("eulaAccepted", false).apply()
         preferences.edit().remove("email").apply()
         preferences.edit().remove("provider").apply()
     }
