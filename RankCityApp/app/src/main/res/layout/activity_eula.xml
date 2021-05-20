@@ -35,6 +35,7 @@
             android:id="@+id/eula_confirm"
             android:layout_width="365dp"
             android:layout_height="103dp"
+            android:layout_marginTop="48dp"
             android:text="Accept"
             android:textColor="@color/button_text"
             app:layout_constraintBottom_toTopOf="@+id/eula_cancel"

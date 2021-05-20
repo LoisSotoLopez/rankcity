@@ -3,40 +3,29 @@ package com.apm2021.rankcity
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.textfield.TextInputEditText
-import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.json.JSONException
 import org.json.JSONObject
-import org.xml.sax.Parser
-import java.io.BufferedReader
-import java.io.DataInputStream
 import java.io.DataOutputStream
-import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.Charset
-import java.nio.charset.StandardCharsets
 
 class LoginActivity : AppCompatActivity() {
 
@@ -47,6 +36,11 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         setup()
+        resetPreferences()
+        checkEula()
+    }
+
+    private fun onActivityResult() {
         session()
     }
 
@@ -242,5 +236,28 @@ class LoginActivity : AppCompatActivity() {
             putExtra("provider", provider.name)
         }
         startActivity(mainIntent)
+    }
+
+    private fun checkEula() {
+        val preferences = applicationContext
+            .getSharedPreferences("com.apm2021.rankcity", Context.MODE_PRIVATE)
+        val eulaAccepted = preferences.getBoolean("eulaAccepted", false)
+        if (!eulaAccepted) {
+            val intent = Intent(this, EulaActivity::class.java)
+            val bundle = Bundle()
+            val eula = R.raw.eula
+            bundle.putInt("eula", eula)
+            intent.putExtras(bundle)
+            startActivityForResult(intent, 1)
+        }
+    }
+
+    // TODO : this function has testing purposes. Delete before prod.
+    private fun resetPreferences() {
+        var preferences = applicationContext
+            .getSharedPreferences("com.apm2021.rankcity", Context.MODE_PRIVATE)
+        preferences.edit().putBoolean("eulaAccepted", false).apply()
+        preferences.edit().remove("email").apply()
+        preferences.edit().remove("provider").apply()
     }
 }
