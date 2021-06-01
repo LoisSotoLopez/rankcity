@@ -163,28 +163,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun getCompleteAddressString(LATITUDE: Double, LONGITUDE: Double): String? {
-        var strAdd = ""
-        val geocoder = Geocoder(this, Locale.getDefault())
-        try {
-            val addresses: List<Address>? = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1)
-            if (addresses != null) {
-                val returnedAddress: Address = addresses[0]
-                val strReturnedAddress = StringBuilder("")
-                for (i in 0..returnedAddress.getMaxAddressLineIndex()) {
-                    strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n")
-                }
-                strAdd = strReturnedAddress.toString()
-                Log.w("Current loction address", strReturnedAddress.toString())
-            } else {
-                Log.w("Current loction address", "No Address returned!")
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Log.w("Current loction address", "Canont get Address!")
-        }
-        return strAdd
-    }
 
     /**
      * Manipulates the map once available.
@@ -286,6 +264,30 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 polyline.startCap = RoundCap()
                 polyline.endCap = CustomCap(BitmapDescriptorFactory.fromResource(R.drawable.arrow))
             }
+    }
+
+    private fun getCompleteAddressString(LATITUDE: Double, LONGITUDE: Double): String? {
+        var strAdd = ""
+        val geocoder = Geocoder(this, Locale.getDefault())
+        try {
+            val addresses: List<Address>? = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1)
+            if (addresses != null) {
+                val returnedAddress: Address = addresses[0]
+                val strReturnedAddress = StringBuilder("")
+                for (i in 0..returnedAddress.getMaxAddressLineIndex()) {
+                    strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n")
+                }
+                strAdd = strReturnedAddress.toString().split(",")[0]
+                Toast.makeText(this, strAdd, Toast.LENGTH_SHORT).show()
+                Log.w("Current loction address", strAdd)
+            } else {
+                Log.w("Current loction address", "No Address returned!")
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.w("Current loction address", "Canont get Address!")
+        }
+        return strAdd
     }
 
 
