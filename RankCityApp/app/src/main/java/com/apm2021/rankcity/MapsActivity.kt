@@ -10,9 +10,11 @@ import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
+import android.os.SystemClock
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.Chronometer
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -40,6 +42,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     val REQUEST_PERMISSIONS_REQUEST_CODE = 1234
     var enable_ubication = false
     var puntuation = 0
+    private lateinit var chronometer: Chronometer
+    var pauseOffSet: Long = 0
+
 /**var isFirstRun = true
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
@@ -62,6 +67,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+        chronometer = findViewById(R.id.chronometer)
+        startChronometer()
 /**postInitialValues()
         fusedLocationProviderClient = FusedLocationProviderClient(this)
         isTracking.observe(this, Observer {
@@ -72,6 +79,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val stopButton = findViewById<Button>(R.id.stopRouteButton) as FloatingActionButton;
         // set on-click listener
         stopButton.setOnClickListener {
+            stopChronometer()
             GlobalScope.launch {
                 println("Llamada API, POST para añadir nueva ruta")
                 /**val conn = URL("http://localhost:5000/routes").openConnection() as HttpURLConnection
@@ -282,6 +290,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             puntuation += 100
             calles.toMutableList().add(calleActual)
         }
+    }
+
+    fun startChronometer() {
+        chronometer.base = SystemClock.elapsedRealtime() - pauseOffSet
+        chronometer.start()
+    }
+
+    fun stopChronometer() {
+        chronometer.stop()
+        pauseOffSet = SystemClock.elapsedRealtime() - chronometer.base
     }
 
 
