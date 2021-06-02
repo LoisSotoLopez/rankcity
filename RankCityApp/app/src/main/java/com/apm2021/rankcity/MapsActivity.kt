@@ -17,7 +17,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.gms.location.*
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -39,6 +39,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     val REQUEST_PERMISSIONS_REQUEST_CODE = 1234
     var enable_ubication = false
+    var puntuation = 0
 /**var isFirstRun = true
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
@@ -104,6 +105,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     fun getLocation() {
         val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val gpsStatus = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        val latLngs = listOf<LatLng>()
 
         if (gpsStatus) {
             val fusedLocation = LocationServices.getFusedLocationProviderClient(applicationContext)
@@ -120,10 +122,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                                 it.result!!.latitude,
                                 it.result!!.longitude
                             )
+
+                            latLngs.toMutableList().add(location)
+
                             getCompleteAddressString(location.latitude, location.longitude)
                             mMap.isMyLocationEnabled = true
                             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 17f))
-                            printPolyline()
+                            printPolyline(latLngs)
                         }
                     }
                 })
@@ -229,41 +234,23 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun printPolyline(){
-        val fusedLocationClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                ACCESS_FINE_LOCATION
-            ) != PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PERMISSION_GRANTED
-        ) {
-            return
-        }
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location: Location? ->
-                val location2 = location?.let {
-                    LatLng(
-                        it.latitude,
-                        it.longitude
-                    )
-                }
+    private fun printPolyline(latLngs: List<LatLng>){
 
-                val polylineOptions = PolylineOptions().add(location2)
-                    .add(LatLng(43.357426851502325, -8.420553803443909))
-                    .add(LatLng(43.358203023732095, -8.421143889427185))
-                    .add(LatLng(43.35844094388473, -8.421149253845215))
-                    .add(LatLng(43.35891288109901, -8.420151472091675))
-                    .add(LatLng(43.35902598947281, -8.419818878173828))
-                    .add(LatLng(43.35798850476193, -8.419067859649656))
-                    .add(LatLng(43.358815373710975, -8.418735265731812))
-                    .width(13f)
-                    .color(ContextCompat.getColor(this, R.color.button_primary))
-                val polyline = mMap.addPolyline(polylineOptions)
-                polyline.startCap = RoundCap()
-                polyline.endCap = CustomCap(BitmapDescriptorFactory.fromResource(R.drawable.arrow))
-            }
+        for (location in latLngs) {
+            val polylineOptions = PolylineOptions().add(location)
+                /**.add(LatLng(43.357426851502325, -8.420553803443909))
+                .add(LatLng(43.358203023732095, -8.421143889427185))
+                .add(LatLng(43.35844094388473, -8.421149253845215))
+                .add(LatLng(43.35891288109901, -8.420151472091675))
+                .add(LatLng(43.35902598947281, -8.419818878173828))
+                .add(LatLng(43.35798850476193, -8.419067859649656))
+                .add(LatLng(43.358815373710975, -8.418735265731812))*/
+                .width(13f)
+                .color(ContextCompat.getColor(this, R.color.button_primary))
+            val polyline = mMap.addPolyline(polylineOptions)
+            polyline.startCap = RoundCap()
+            /**polyline.endCap = CustomCap(BitmapDescriptorFactory.fromResource(R.drawable.arrow))*/
+        }
     }
 
     private fun getCompleteAddressString(LATITUDE: Double, LONGITUDE: Double): String? {
@@ -288,6 +275,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             Log.w("Current loction address", "Canont get Address!")
         }
         return strAdd
+    }
+
+    private fun increasePuntuation(calleActual: String, calles: List<String>){
+        if (calleActual !in calles){
+            puntuation += 100
+            calles.toMutableList().add(calleActual)
+        }
     }
 
 
