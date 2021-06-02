@@ -165,6 +165,17 @@ def get_routes_user(user_id):
 
         return {"count": len(results), "routes": results}
 
+    # Add routes to user
+    else request.method == 'POST':
+        if request.is_json:
+            data = request.get_json()
+            new_route = RouteModel(id=data['id'], title=data['title'], date=data['date'],
+                                 user=user_id, score=data['score'])
+            db.session.add(new_route)
+            db.session.commit()
+            
+            return {"message": f"Route {new_route.__repr__()} has been created successfully."}
+
 
 @app.route('/users', methods=['POST', 'GET'])
 def handle_users():
