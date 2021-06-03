@@ -9,6 +9,7 @@ import android.widget.Toast
 class InfoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        theme.applyStyle(R.style.primaryColors, true)
         setContentView(R.layout.activity_info)
 
         // Pulsar boton home nos lleva al inicio de la app
