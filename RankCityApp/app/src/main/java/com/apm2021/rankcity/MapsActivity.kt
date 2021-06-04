@@ -2,6 +2,7 @@ package com.apm2021.rankcity
 
 import android.Manifest
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
@@ -10,6 +11,7 @@ import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
+import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
 import android.view.View
@@ -19,7 +21,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.*
+import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -34,7 +37,6 @@ import java.util.*
 
 
 typealias Polyline = MutableList<LatLng>
-typealias Polylines = MutableList<Polyline>
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -44,6 +46,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     var puntuation = 0
     private lateinit var chronometer: Chronometer
     var pauseOffSet: Long = 0
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var locationRequest: LocationRequest
+    private lateinit var locationCallback: LocationCallback
+    private var currentLocation: Location? = null
 
 /**var isFirstRun = true
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -70,6 +76,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         chronometer = findViewById(R.id.chronometer)
         startChronometer()
+        fusedLocationProviderClient = FusedLocationProviderClient(this)
 /**postInitialValues()
         fusedLocationProviderClient = FusedLocationProviderClient(this)
         isTracking.observe(this, Observer {
@@ -107,11 +114,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         if (!checkPermissions()) {
             requestPermissions()
         } else {
-            getLocation()
+            startLocationTracking(true)
+            update()
+            /**getLocation()*/
         }
     }
 
-    fun getLocation() {
+    /**fun getLocation() {
         val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val gpsStatus = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
         val latLngs = listOf<LatLng>()
@@ -152,7 +161,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 "La he activado",
                 View.OnClickListener { getLocation() }).show()
         }
-    }
+    }*/
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -164,7 +173,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             REQUEST_PERMISSIONS_REQUEST_CODE -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PERMISSION_GRANTED) {
                     // Crear peticion de ubicacion
-                    getLocation()
+                    /**getLocation()*/
+                    startLocationTracking(true)
+                    update()
                 } else {
                     Snackbar.make(
                         findViewById(R.id.maps_layout), "QUIERO PERMISOS, DAME PERMISOS!!!",
@@ -244,22 +255,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun printPolyline(latLngs: List<LatLng>){
+        val polylineOptions = PolylineOptions()
 
         for (location in latLngs) {
-            val polylineOptions = PolylineOptions().add(location)
-                /**.add(LatLng(43.357426851502325, -8.420553803443909))
-                .add(LatLng(43.358203023732095, -8.421143889427185))
-                .add(LatLng(43.35844094388473, -8.421149253845215))
-                .add(LatLng(43.35891288109901, -8.420151472091675))
-                .add(LatLng(43.35902598947281, -8.419818878173828))
-                .add(LatLng(43.35798850476193, -8.419067859649656))
-                .add(LatLng(43.358815373710975, -8.418735265731812))*/
+            polylineOptions.add(location)
                 .width(13f)
                 .color(ContextCompat.getColor(this, R.color.button_primary))
-            val polyline = mMap.addPolyline(polylineOptions)
-            polyline.startCap = RoundCap()
-            /**polyline.endCap = CustomCap(BitmapDescriptorFactory.fromResource(R.drawable.arrow))*/
         }
+        val polyline = mMap.addPolyline(polylineOptions)
+        polyline.startCap = RoundCap()
     }
 
     private fun getCompleteAddressString(LATITUDE: Double, LONGITUDE: Double): String? {
@@ -301,6 +305,50 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     fun stopChronometer() {
         chronometer.stop()
         pauseOffSet = SystemClock.elapsedRealtime() - chronometer.base
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun startLocationTracking(isTracking: Boolean){
+        if(isTracking){
+            val request = LocationRequest().apply {
+                interval = 5000L
+                fastestInterval = 2000L
+                priority = PRIORITY_HIGH_ACCURACY
+            }
+
+            update()
+
+            fusedLocationProviderClient.requestLocationUpdates(
+                request, locationCallback, Looper.getMainLooper()
+            )
+            Toast.makeText(this, "Entra", Toast.LENGTH_SHORT).show()
+
+        } else {
+            fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+        }
+    }
+
+    private fun update(){
+        val latLngs = mutableListOf<LatLng>()
+        locationCallback = object : LocationCallback() {
+            @SuppressLint("MissingPermission")
+            override fun onLocationResult(locationResult: LocationResult) {
+                super.onLocationResult(locationResult)
+                for (locations in locationResult.locations){
+                    val location = LatLng(
+                        locations.latitude,
+                        locations.longitude
+                    )
+                    mMap.isMyLocationEnabled = true
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 17f))
+
+                    latLngs.add(location)
+                    getCompleteAddressString(location.latitude, location.longitude)
+                    printPolyline(latLngs)
+
+                }
+            }
+        }
     }
 
 
