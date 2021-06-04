@@ -73,13 +73,11 @@
                     android:textColor="@color/button_primary"
                     android:textSize="20sp" />
 
-                <EditText
-                    android:id="@+id/editTextNumber"
+                <TextView
+                    android:id="@+id/punctuationText"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:ems="10"
-                    android:inputType="number"
-                    android:text="0"
+                    android:layout_height="wrap_content"
+                    android:text="TextView"
                     android:textColor="@color/button_primary"
                     android:textSize="20sp" />
 

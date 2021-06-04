@@ -17,6 +17,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.Chronometer
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -43,7 +44,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     val REQUEST_PERMISSIONS_REQUEST_CODE = 1234
     var enable_ubication = false
-    var puntuation = 0
+    var punctuation = 0
     private lateinit var chronometer: Chronometer
     var pauseOffSet: Long = 0
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -76,6 +77,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         chronometer = findViewById(R.id.chronometer)
         startChronometer()
+        findViewById<TextView>(R.id.punctuationText).text = punctuation.toString()
         fusedLocationProviderClient = FusedLocationProviderClient(this)
 /**postInitialValues()
         fusedLocationProviderClient = FusedLocationProviderClient(this)
@@ -266,7 +268,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         polyline.startCap = RoundCap()
     }
 
-    private fun getCompleteAddressString(LATITUDE: Double, LONGITUDE: Double): String? {
+    private fun getCompleteAddressString(LATITUDE: Double, LONGITUDE: Double): String {
         var strAdd = ""
         val geocoder = Geocoder(this, Locale.getDefault())
         try {
@@ -290,10 +292,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         return strAdd
     }
 
-    private fun increasePuntuation(calleActual: String, calles: List<String>){
-        if (calleActual !in calles){
-            puntuation += 100
-            calles.toMutableList().add(calleActual)
+    private fun increasePunctuation(currentAddress: String, addresses: List<String>){
+        if (currentAddress !in addresses && currentAddress != null){
+            punctuation += 100
+            findViewById<TextView>(R.id.punctuationText).text = punctuation.toString()
         }
     }
 
@@ -330,6 +332,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun update(){
         val latLngs = mutableListOf<LatLng>()
+        var currentAddress: String = "Isaac Peral"
+        var addresses = mutableListOf<String>()
         locationCallback = object : LocationCallback() {
             @SuppressLint("MissingPermission")
             override fun onLocationResult(locationResult: LocationResult) {
@@ -342,10 +346,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     mMap.isMyLocationEnabled = true
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 17f))
 
+                    //Add new location to the list
                     latLngs.add(location)
-                    getCompleteAddressString(location.latitude, location.longitude)
+                    //Get the name of the street
+                    currentAddress = getCompleteAddressString(location.latitude, location.longitude)
+                    //Print the route
                     printPolyline(latLngs)
-
+                    //Increase punctuation depending on the street
+                    increasePunctuation(currentAddress, addresses)
+                    addresses.add(currentAddress)
+                    Log.w("Direccion actual ", currentAddress)
+                    Log.w("Array ", addresses.last().toString())
+                    Log.w("Punctuation ", punctuation.toString())
                 }
             }
         }
