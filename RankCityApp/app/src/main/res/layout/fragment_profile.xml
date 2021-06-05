@@ -20,7 +20,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+        app:layout_constraintTop_toBottomOf="@+id/imgPhoto" />
 
     <TextView
         android:id="@+id/textView3"
@@ -61,7 +61,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
     <ImageView
-        android:id="@+id/imageView3"
+        android:id="@+id/imgPhoto"
         android:layout_width="124dp"
         android:layout_height="132dp"
         android:layout_marginTop="48dp"
@@ -117,5 +117,18 @@
         android:layout_height="341dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/period_change" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/cameraButton"
+        android:layout_width="43dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="148dp"
+        android:layout_marginEnd="152dp"
+        android:layout_marginRight="152dp"
+        android:clickable="true"
+        app:backgroundTint="@color/button_primary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/ic_profile" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

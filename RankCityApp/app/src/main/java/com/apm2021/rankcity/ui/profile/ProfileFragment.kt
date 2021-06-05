@@ -1,25 +1,52 @@
 package com.apm2021.rankcity.ui.profile
 
+import android.Manifest
+import android.app.Activity
+import android.content.ContentResolver
+import android.content.ContentValues
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.media.Image
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.apm2021.rankcity.R
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
 class ProfileFragment : Fragment() {
+
+    private val REQUEST_CAMERA = 1002
+    var photo: Uri? = null
+    lateinit var imgPhoto: ImageView
+    lateinit var cameraButton: FloatingActionButton
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_profile, container, false)
+        val root: View = inflater.inflate(R.layout.fragment_profile, container, false)
+        imgPhoto = root.findViewById(R.id.imgPhoto) as ImageView
+        cameraButton = root.findViewById<Button>(R.id.cameraButton) as FloatingActionButton
+        cameraButton.setOnClickListener {
+            openCameraClick()
+        }
+        return root
     }
 
     override fun onViewCreated(itemView: View, savedInstanceState: Bundle?) {
@@ -38,6 +65,63 @@ class ProfileFragment : Fragment() {
             adapter = ProfileAdapter(datesList)
         }
         //}
+    }
+
+    //Al pulsar botón para abrir cámara comprobamos permisos
+    private fun openCameraClick(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            if (context?.let {
+                    ContextCompat.checkSelfPermission(
+                        it,
+                        Manifest.permission.CAMERA
+                    )
+                } == PackageManager.PERMISSION_DENIED || context?.let {
+                    ContextCompat.checkSelfPermission(
+                        it,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
+                } == PackageManager.PERMISSION_DENIED){
+                    val cameraPermits = arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    requestPermissions(cameraPermits, REQUEST_CAMERA)
+            }
+        }else{
+            openCamera()
+        }
+    }
+
+    //Abrir camara de movil
+    private fun openCamera(){
+        val value = ContentValues()
+        value.put(MediaStore.Images.Media.TITLE, "Nueva imagen")
+        photo =
+            activity?.contentResolver?.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, value)
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photo)
+        startActivityForResult(cameraIntent, REQUEST_CAMERA)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?){
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode == Activity.RESULT_OK && requestCode == REQUEST_CAMERA){
+            imgPhoto.setImageURI(data?.data)
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when(requestCode){
+            REQUEST_CAMERA ->{
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    openCamera()
+                }else{
+                    Toast.makeText(context, "No se puede abrir la cámara", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
 }
