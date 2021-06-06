@@ -147,7 +147,7 @@ def handle_route(route_id):
         return {"message": f"Recorrido {route.id} successfully deleted."}
 
 
-@app.route('/routes/<user_id>', methods=['GET'])
+@app.route('/routes/user/<user_id>', methods=['GET', 'POST'])
 def get_routes_user(user_id):
     user = UserModel.query.get_or_404(user_id)
 
@@ -165,16 +165,20 @@ def get_routes_user(user_id):
 
         return {"count": len(results), "routes": results}
 
-    # Add routes to user
-    else request.method == 'POST':
+    elif request.method == 'POST':
         if request.is_json:
             data = request.get_json()
             new_route = RouteModel(id=data['id'], title=data['title'], date=data['date'],
-                                 user=user_id, score=data['score'])
+                                 user=user.username, score=data['score'])
+            for street in data['streets']:
+                route_streets = RouteStreetModel(new_route.id, street['id_street'], street['score'])
+                db.session.add(route_streets)
+
             db.session.add(new_route)
             db.session.commit()
             
             return {"message": f"Route {new_route.__repr__()} has been created successfully."}
+
 
 
 @app.route('/users', methods=['POST', 'GET'])
