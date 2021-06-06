@@ -3,7 +3,6 @@ package com.apm2021.rankcity.ui.profile
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -89,7 +88,7 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    //Abrir camara de movil
+    //Abrir camara de móvil
     private fun openCamera(){
         val value = ContentValues()
         value.put(MediaStore.Images.Media.TITLE, "Nueva imagen")
@@ -100,6 +99,7 @@ class ProfileFragment : Fragment() {
         startActivityForResult(cameraIntent, REQUEST_CAMERA)
     }
 
+    //Al pulsar botón para abrir galería comprobamos permisos
     private fun openGalleryClick(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (context?.let {
@@ -118,6 +118,7 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    //Abrir galería de fotos del móvil
     private fun showGallery(){
         val galleryIntent = Intent(Intent.ACTION_PICK)
         galleryIntent.type = "image/*"
@@ -125,6 +126,7 @@ class ProfileFragment : Fragment() {
 
     }
 
+    //Diálogo para elegir si abrir cámara o galería
     private fun dialog() {
         val opciones = arrayOf<CharSequence>("Abrir cámara", "Abrir galería", "Cancelar")
         val alertOpciones = AlertDialog.Builder(context)
@@ -145,6 +147,7 @@ class ProfileFragment : Fragment() {
         alertOpciones.show()
     }
 
+    //Establecer foto de perfil cogiendo la foto de la cámara o de la galería
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?){
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == Activity.RESULT_OK && requestCode == REQUEST_GALLERY){
@@ -155,6 +158,7 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    //Comprobar si se aceptan permisos
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
