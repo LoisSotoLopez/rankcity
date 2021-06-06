@@ -83,6 +83,8 @@ class ProfileFragment : Fragment() {
                 } == PackageManager.PERMISSION_DENIED){
                     val cameraPermits = arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     requestPermissions(cameraPermits, REQUEST_CAMERA)
+            }else{
+                openCamera()
             }
         }else{
             openCamera()
@@ -103,7 +105,7 @@ class ProfileFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?){
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == Activity.RESULT_OK && requestCode == REQUEST_CAMERA){
-            imgPhoto.setImageURI(data?.data)
+            imgPhoto.setImageURI(photo)
         }
     }
 
