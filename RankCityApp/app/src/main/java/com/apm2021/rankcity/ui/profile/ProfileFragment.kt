@@ -2,11 +2,11 @@ package com.apm2021.rankcity.ui.profile
 
 import android.Manifest
 import android.app.Activity
-import android.content.ContentResolver
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.Image
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -14,14 +14,11 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.apm2021.rankcity.R
@@ -30,6 +27,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class ProfileFragment : Fragment() {
 
+    private val REQUEST_GALLERY = 1001
     private val REQUEST_CAMERA = 1002
     var photo: Uri? = null
     lateinit var imgPhoto: ImageView
@@ -44,7 +42,7 @@ class ProfileFragment : Fragment() {
         imgPhoto = root.findViewById(R.id.imgPhoto) as ImageView
         cameraButton = root.findViewById<Button>(R.id.cameraButton) as FloatingActionButton
         cameraButton.setOnClickListener {
-            openCameraClick()
+            dialog()
         }
         return root
     }
@@ -102,8 +100,56 @@ class ProfileFragment : Fragment() {
         startActivityForResult(cameraIntent, REQUEST_CAMERA)
     }
 
+    private fun openGalleryClick(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (context?.let {
+                    ContextCompat.checkSelfPermission(
+                        it,
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    )
+                } == PackageManager.PERMISSION_DENIED){
+                val archivePermits = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+                requestPermissions(archivePermits, REQUEST_GALLERY)
+            }else{
+                showGallery()
+            }
+        }else{
+            showGallery()
+        }
+    }
+
+    private fun showGallery(){
+        val galleryIntent = Intent(Intent.ACTION_PICK)
+        galleryIntent.type = "image/*"
+        startActivityForResult(galleryIntent, REQUEST_GALLERY)
+
+    }
+
+    private fun dialog() {
+        val opciones = arrayOf<CharSequence>("Abrir cámara", "Abrir galería", "Cancelar")
+        val alertOpciones = AlertDialog.Builder(context)
+        alertOpciones.setTitle("Seleccione una Opción")
+        alertOpciones.setItems(
+            opciones
+        ) { dialogInterface, i ->
+            if (opciones[i] == "Abrir cámara") {
+                openCameraClick()
+            } else {
+                if (opciones[i] == "Abrir galería") {
+                    openGalleryClick()
+                } else {
+                    dialogInterface.dismiss()
+                }
+            }
+        }
+        alertOpciones.show()
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?){
         super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode == Activity.RESULT_OK && requestCode == REQUEST_GALLERY){
+            imgPhoto.setImageURI(data?.data)
+        }
         if(resultCode == Activity.RESULT_OK && requestCode == REQUEST_CAMERA){
             imgPhoto.setImageURI(photo)
         }
@@ -116,6 +162,13 @@ class ProfileFragment : Fragment() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when(requestCode){
+            REQUEST_GALLERY ->{
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    showGallery()
+                }else{
+                    Toast.makeText(context, "No se puede abrir la galería", Toast.LENGTH_SHORT).show()
+                }
+            }
             REQUEST_CAMERA ->{
                 if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     openCamera()
