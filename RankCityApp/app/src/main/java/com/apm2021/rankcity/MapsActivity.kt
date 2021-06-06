@@ -3,18 +3,14 @@ package com.apm2021.rankcity
 import android.Manifest
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
-import android.location.LocationManager
 import android.os.Bundle
 import android.os.Looper
 import android.os.SystemClock
-import android.text.InputType
 import android.util.Log
 import android.view.View
 import android.widget.*
@@ -29,15 +25,13 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.*
 
-
-typealias Polyline = MutableList<LatLng>
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -52,6 +46,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var locationCallback: LocationCallback
     private var currentLocation: Location? = null
     private lateinit var routeName: String
+    var isTracking = true
+    var addresses = mutableListOf<String>()
 
 /**var isFirstRun = true
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -76,6 +72,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+        val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm")
+        val currentDate = sdf.format(Date())
+        Toast.makeText(this, currentDate, Toast.LENGTH_SHORT).show()
         chronometer = findViewById(R.id.chronometer)
         //startChronometer()
         findViewById<TextView>(R.id.punctuationText).text = punctuation.toString()
@@ -90,11 +89,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val stopButton = findViewById<Button>(R.id.stopRouteButton) as FloatingActionButton
         // set on-click listener
         stopButton.setOnClickListener {
+            fusedLocationProviderClient.removeLocationUpdates(locationCallback)
             stopChronometer()
             titleRouteDialog()
             GlobalScope.launch {
                 println("Llamada API, POST para añadir nueva ruta")
-                /**val conn = URL("http://localhost:5000/routes").openConnection() as HttpURLConnection
+                /** EL POST DEBERÄ IR AL DARLE A OK EN EL DIALOGO DE TITULO DE RUTA
+                 * val conn = URL("http://localhost:5000/routes").openConnection() as HttpURLConnection
                 conn.requestMethod = "POST"
                 conn.connectTimeout = 300000
                 conn.doOutput = true
@@ -115,7 +116,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         if (!checkPermissions()) {
             requestPermissions()
         } else {
-            startLocationTracking(true)
+            startLocationTracking(isTracking)
             startChronometer()
             //update()
             /**getLocation()*/
@@ -276,7 +277,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             if (addresses != null) {
                 val returnedAddress: Address = addresses[0]
                 val strReturnedAddress = StringBuilder("")
-                for (i in 0..returnedAddress.getMaxAddressLineIndex()) {
+                for (i in 0..returnedAddress.maxAddressLineIndex) {
                     strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n")
                 }
                 strAdd = strReturnedAddress.toString().split(",")[0]
@@ -334,7 +335,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun update(){
         val latLngs = mutableListOf<LatLng>()
         var currentAddress: String
-        var addresses = mutableListOf<String>()
         locationCallback = object : LocationCallback() {
             @SuppressLint("MissingPermission")
             override fun onLocationResult(locationResult: LocationResult) {
@@ -394,6 +394,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 builder.setNegativeButton("Cancel") {
                         dialog, which -> dialog.cancel()
                         startChronometer()
+                        startLocationTracking(isTracking)
                 }
 
 
