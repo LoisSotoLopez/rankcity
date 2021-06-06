@@ -77,7 +77,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
 
         chronometer = findViewById(R.id.chronometer)
-        startChronometer()
+        //startChronometer()
         findViewById<TextView>(R.id.punctuationText).text = punctuation.toString()
         fusedLocationProviderClient = FusedLocationProviderClient(this)
 /**postInitialValues()
@@ -91,7 +91,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         // set on-click listener
         stopButton.setOnClickListener {
             stopChronometer()
-            nameRouteDialog()
+            titleRouteDialog()
             GlobalScope.launch {
                 println("Llamada API, POST para añadir nueva ruta")
                 /**val conn = URL("http://localhost:5000/routes").openConnection() as HttpURLConnection
@@ -116,7 +116,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             requestPermissions()
         } else {
             startLocationTracking(true)
-            update()
+            startChronometer()
+            //update()
             /**getLocation()*/
         }
     }
@@ -286,6 +287,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         } catch (e: Exception) {
             e.printStackTrace()
+            strAdd = "Invalid address"
             Log.w("Current loction address", "Canont get Address!")
         }
         return strAdd
@@ -298,12 +300,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    fun startChronometer() {
+    private fun startChronometer() {
         chronometer.base = SystemClock.elapsedRealtime() - pauseOffSet
         chronometer.start()
     }
 
-    fun stopChronometer() {
+    private fun stopChronometer() {
         chronometer.stop()
         pauseOffSet = SystemClock.elapsedRealtime() - chronometer.base
     }
@@ -331,7 +333,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun update(){
         val latLngs = mutableListOf<LatLng>()
-        var currentAddress: String = "Isaac Peral"
+        var currentAddress: String
         var addresses = mutableListOf<String>()
         locationCallback = object : LocationCallback() {
             @SuppressLint("MissingPermission")
@@ -352,8 +354,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     //Print the route
                     printPolyline(latLngs)
                     //Increase punctuation depending on the street
-                    increasePunctuation(currentAddress, addresses)
-                    addresses.add(currentAddress)
+                    if(currentAddress != "Invalid address") {
+                        increasePunctuation(currentAddress, addresses)
+                        addresses.add(currentAddress)
+                    }
                     Log.w("Direccion actual ", currentAddress)
                     Log.w("Array ", addresses.last().toString())
                     Log.w("Punctuation ", punctuation.toString())
@@ -362,25 +366,36 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun nameRouteDialog(){
+    private fun titleRouteDialog(){
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Dale un nombre a la ruta")
+        builder.setTitle("Dale un título a la ruta")
 
         // Set up the input
         val input = EditText(this)
-        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        // Specify the type of input expected
         input.setHint("Enter Text")
         builder.setView(input)
 
-        // Set up the buttons
-        builder.setPositiveButton("OK") { dialog, i ->
-            // Here you get get input text from the Edittext
-            routeName = input.text.toString()
-            val intent = Intent(this, InfoActivity::class.java)
-            startActivity(intent)
-            Toast.makeText(this, "Ruta finalizada y guardada", Toast.LENGTH_SHORT).show()
-        }
-        builder.setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which -> dialog.cancel() })
+
+                // Set up the buttons
+                builder.setPositiveButton("OK") { dialog, i ->
+                    // Here you get get input text from the Edittext
+                    routeName = input.text.toString()
+                    if (routeName != "") {
+                        val intent = Intent(this, InfoActivity::class.java)
+                        startActivity(intent)
+                        Toast.makeText(this, routeName , Toast.LENGTH_SHORT).show()
+                    }else{
+                        titleRouteDialog()
+                        Toast.makeText(this, "Debes darle un título a la ruta", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                builder.setNegativeButton("Cancel") {
+                        dialog, which -> dialog.cancel()
+                        startChronometer()
+                }
+
 
         builder.show()
     }
