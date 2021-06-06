@@ -4,6 +4,7 @@ import android.Manifest
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.location.Address
@@ -13,12 +14,11 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.os.Looper
 import android.os.SystemClock
+import android.text.InputType
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.Chronometer
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -51,6 +51,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
     private var currentLocation: Location? = null
+    private lateinit var routeName: String
 
 /**var isFirstRun = true
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -90,6 +91,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         // set on-click listener
         stopButton.setOnClickListener {
             stopChronometer()
+            nameRouteDialog()
             GlobalScope.launch {
                 println("Llamada API, POST para añadir nueva ruta")
                 /**val conn = URL("http://localhost:5000/routes").openConnection() as HttpURLConnection
@@ -104,9 +106,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 "                \"score\": " + score +",\n" +
                 "            }"*/
             }
-            Toast.makeText(this, "Route finished", Toast.LENGTH_SHORT).show()
-            val intent = Intent(this, InfoActivity::class.java)
-            startActivity(intent)
         }
     }
 
@@ -363,57 +362,27 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    private fun nameRouteDialog(){
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Dale un nombre a la ruta")
 
-/**private fun addEmptyPolyline() = pathPoints.value?.apply {
-        add(mutableListOf())
-        pathPoints.postValue(this)
-    } ?: pathPoints.postValue(mutableListOf(mutableListOf()))
+        // Set up the input
+        val input = EditText(this)
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.setHint("Enter Text")
+        builder.setView(input)
 
-    val locationCallback = object : LocationCallback() {
-        override fun onLocationResult(result: LocationResult?) {
-            super.onLocationResult(result)
-            if(isTracking.value!!) {
-                result?.locations?.let { locations ->
-                    for(location in locations) {
-                        addPathPoint(location)
-                    }
-                }
-            }
+        // Set up the buttons
+        builder.setPositiveButton("OK") { dialog, i ->
+            // Here you get get input text from the Edittext
+            routeName = input.text.toString()
+            val intent = Intent(this, InfoActivity::class.java)
+            startActivity(intent)
+            Toast.makeText(this, "Ruta finalizada y guardada", Toast.LENGTH_SHORT).show()
         }
+        builder.setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which -> dialog.cancel() })
+
+        builder.show()
     }
 
-    @SuppressLint("MissingPermission")
-    private fun updateLocationTracking(isTracking: Boolean){
-        if(isTracking){
-            val request = LocationRequest().apply {
-                interval = 5000L
-                fastestInterval = 2000L
-                priority = PRIORITY_HIGH_ACCURACY
-            }
-            fusedLocationProviderClient.requestLocationUpdates(
-                request, locationCallback, Looper.getMainLooper()
-                )
-
-        } else {
-            fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-        }
-    }
-
-    private fun addPathPoint(location: Location?){
-        location?.let {
-            val pos = LatLng(location.latitude, location.longitude)
-            pathPoints.value?.apply {
-                last().add(pos)
-                pathPoints.postValue(this)
-            }
-        }
-    }
-
-    private fun startForegroundService() {
-        addEmptyPolyline()
-        isTracking.postValue(true)
-
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE)
-                as NotificationManager
-    }*/
 }
