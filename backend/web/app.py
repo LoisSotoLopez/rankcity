@@ -158,7 +158,7 @@ def get_routes_user(user_id):
     user = UserModel.query.get_or_404(user_id)
 
     if request.method == 'GET':
-        routes = RouteModel.query.filter(user_id=user.id)
+        routes = RouteModel.query.filter_by(user=user.username).all()
         results = [
             {
                 "id": route.id,
@@ -169,6 +169,17 @@ def get_routes_user(user_id):
                 "score": route.score
             } for route in routes
         ]
+        list_streets = []
+        for route in results:
+            streets = RouteStreetModel.query.filter_by(route=route['id']).all()
+            for street in streets:
+                street_aux = StreetModel.query.get_or_404(street.street)
+                street = {
+                    "name": street_aux.name,
+                    "score": street.score
+                }
+                list_streets.append(street)
+            route['streets'] = list_streets
 
         return {"count": len(results), "routes": results}
 
