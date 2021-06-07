@@ -8,7 +8,7 @@ This project has been developed for the _Arquitecturas e Plataformas Móbiles_ (
 
 
 ##### Original developers :
- - Adrian García
- - Alejo Cedeira
- - Javier Mejuto
- - Lois Soto
+ - Adrian Xuíz García
+ - Alejo Nahuel Cedeira Vidal
+ - Javier Mejuto Vázquez
+ - Lois Soto López

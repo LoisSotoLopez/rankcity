@@ -32,14 +32,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Usuario" />
+            android:text="@string/userNameItem" />
 
         <TextView
             android:id="@+id/card_user_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Fecha" />
+            android:text="@string/dateItem" />
 
         <TextView
             android:id="@+id/card_user_score"

@@ -30,6 +30,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        theme.applyStyle(R.style.primaryColors, true)
         setContentView(R.layout.activity_login)
 
         setup()
@@ -127,7 +128,7 @@ class LoginActivity : AppCompatActivity() {
                     //val triple = getUser(name); // TODO Retrieve required info here
                     showMain(it.result?.user?.email ?: "", ProviderType.BASIC)
                 } else {
-                    showAlert("No se pudo loguear")
+                    showAlert("Contraseña incorrecta")
                 }
             }
         }

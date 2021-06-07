@@ -17,4 +17,6 @@
     <color name="button_primary">#7099FF</color>
     <color name="button_secondary">#FFBB86FC</color>
     <color name="button_text">#000000</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="statusBar">#536DFE</color>
 </resources>
