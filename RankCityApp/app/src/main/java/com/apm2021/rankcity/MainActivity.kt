@@ -1,9 +1,12 @@
 package com.apm2021.rankcity
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -46,5 +49,31 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
+    }
+
+    override fun onBackPressed() {
+        //super.onBackPressed()
+        exitDialog()
+
+    }
+
+    private fun exitDialog(){
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("¿Estás seguro de que quieres salir de RankCity?")
+
+        // Set up the buttons
+        builder.setPositiveButton("Sí") { dialog, i ->
+            finishAffinity()
+        }
+
+        builder.setNegativeButton("No") {
+                dialog, which -> dialog.cancel()
+        }
+
+        builder.setNeutralButton("Cerrar sesión"){ dialog, i ->
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
+        builder.show()
     }
 }

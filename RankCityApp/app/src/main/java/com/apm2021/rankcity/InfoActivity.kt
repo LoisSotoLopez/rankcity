@@ -27,4 +27,15 @@ class InfoActivity : AppCompatActivity() {
             Toast.makeText(this, "Share route", Toast.LENGTH_SHORT).show()
         }
     }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        finish()
+    }
 }

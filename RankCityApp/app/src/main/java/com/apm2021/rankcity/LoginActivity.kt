@@ -231,4 +231,25 @@ class LoginActivity : AppCompatActivity() {
         }
         startActivity(mainIntent)
     }
+
+    override fun onBackPressed() {
+        //super.onBackPressed()
+        exitDialog()
+
+    }
+
+    private fun exitDialog(){
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("¿Estás seguro de que quieres salir de RankCity?")
+
+        // Set up the buttons
+        builder.setPositiveButton("Sí") { dialog, i ->
+            finish()
+        }
+
+        builder.setNegativeButton("No") {
+                dialog, which -> dialog.cancel()
+        }
+        builder.show()
+    }
 }

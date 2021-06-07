@@ -401,4 +401,29 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         builder.show()
     }
 
+    override fun onBackPressed() {
+        //super.onBackPressed()
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+        stopChronometer()
+        exitDialog()
+
+    }
+
+    private fun exitDialog(){
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("¿Estás seguro de que quieres salir de la ruta?")
+
+        // Set up the buttons
+        builder.setPositiveButton("Sí") { dialog, i ->
+            finish()
+        }
+
+        builder.setNegativeButton("No") {
+                dialog, which -> dialog.cancel()
+            startChronometer()
+            startLocationTracking(isTracking)
+        }
+        builder.show()
+    }
+
 }
