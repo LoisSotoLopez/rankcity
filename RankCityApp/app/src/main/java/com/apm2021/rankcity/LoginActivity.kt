@@ -87,9 +87,8 @@ class LoginActivity : AppCompatActivity() {
             FirebaseAuth.getInstance().createUserWithEmailAndPassword(
                 name,
                 pass).addOnCompleteListener {
-                //if (it.isSuccessful && postUser(name)) { %TODO: Add user entry on backend
-                if (it.isSuccessful && true) {
-                    showMain(it.result?.user?.email ?: "", ProviderType.BASIC )
+                if (it.isSuccessful && postUser(name)) {
+                    showMain(it.result?.user?.email ?: "", ProviderType.BASIC)
                 } else {
                     showAlert("No se pudo registrar")
                 }
@@ -190,7 +189,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun postUser(userid: String) : Boolean{
-        val conn = URL("http://localhost:5000/users/" + userid).openConnection() as HttpURLConnection
+        val conn = URL("http://192.168.1.65:5000/users/").openConnection() as HttpURLConnection
         conn.requestMethod = "POST"
         conn.connectTimeout = 300000
         conn.doOutput = true
@@ -199,9 +198,10 @@ class LoginActivity : AppCompatActivity() {
                 "                \"username\": " + userid +",\n" +
                 "                \"name\": " + userid +",\n" +
                 "                \"email\": " + userid +"\n" +
+                "                \"accept_eula\": " + true +"\n" +
                 "            }"
         val postData: ByteArray =
-                message.toByteArray(Charset.forName("UTF-8"))
+            message.toByteArray(Charset.forName("UTF-8"))
 
         conn.setRequestProperty("charset", "utf-8")
         conn.setRequestProperty("Content-length", postData.size.toString())
