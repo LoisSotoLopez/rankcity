@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_background"
+    tools:context=".MainActivity">
+
+
+    <TextView
+        android:id="@+id/editProfileTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:text="Editar Perfil"
+        android:textColor="@color/button_text"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/editProfileImgPhoto"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/editProfileImgPhoto"
+        android:layout_width="199dp"
+        android:layout_height="235dp"
+        android:layout_marginTop="124dp"
+        android:src="@drawable/ic_profile"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/editProfileEditImgButton"
+        android:layout_width="64dp"
+        android:layout_height="66dp"
+        android:layout_marginTop="316dp"
+        android:layout_marginEnd="96dp"
+        android:layout_marginRight="96dp"
+        android:clickable="true"
+        app:backgroundTint="@color/button_primary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/ic_profile" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/hometownInputText"
+        android:layout_width="367dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="24dp"
+        android:layout_weight="1"
+        android:background="@color/input_background"
+        android:hint="@string/edit_hometown_input_placeholder"
+        android:inputType="text"
+        android:textColor="@color/input_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editNickInputText" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/editNickInputText"
+        android:layout_width="364dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="60dp"
+        android:background="@color/input_background"
+        android:hint="@string/edit_nick_input_placeholder"
+        android:textColor="@color/input_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.468"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editProfileImgPhoto" />
+
+    <Button
+        android:id="@+id/acceptProfileEditionButton"
+        android:layout_width="354dp"
+        android:layout_height="54dp"
+        android:layout_marginTop="48dp"
+        android:text="@string/accept_profile_editon_button_text"
+        android:textColor="@color/button_text"
+        app:backgroundTint="@color/button_primary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/hometownInputText" />
+
+    <Button
+        android:id="@+id/cancelProfileEditionButton"
+        android:layout_width="354dp"
+        android:layout_height="54dp"
+        android:text="@string/cancel_profile_editon_button_text"
+        android:textColor="@color/button_text"
+        app:backgroundTint="@color/button_primary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/acceptProfileEditionButton" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

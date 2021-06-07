@@ -87,9 +87,10 @@ class LoginActivity : AppCompatActivity() {
             FirebaseAuth.getInstance().createUserWithEmailAndPassword(
                 name,
                 pass).addOnCompleteListener {
-                //if (it.isSuccessful && postUser(name)) { %TODO: Add user entry on backend
+                //if (it.isSuccessful && postUser(name)) {
+                // TODO: Add user entry on backend
                 if (it.isSuccessful && true) {
-                    showMain(it.result?.user?.email ?: "", ProviderType.BASIC )
+                    showEditProfile(it.result?.user?.email ?: "")
                 } else {
                     showAlert("No se pudo registrar")
                 }
@@ -234,6 +235,14 @@ class LoginActivity : AppCompatActivity() {
             putExtra("provider", provider.name)
         }
         startActivity(mainIntent)
+    }
+
+    private fun showEditProfile(email: String) {
+        val profileEditorIntent = Intent(this, ProfileEditorActivity::class.java).apply {
+            putExtra("email", email)
+            putExtra( "mandatory", true)
+        }
+        startActivity(profileEditorIntent)
     }
 
     private fun checkEula() {
