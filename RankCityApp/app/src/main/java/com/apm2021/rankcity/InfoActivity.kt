@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 
 class InfoActivity : AppCompatActivity() {
@@ -11,6 +12,16 @@ class InfoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         theme.applyStyle(R.style.primaryColors, true)
         setContentView(R.layout.activity_info)
+
+        var bundle = intent.extras
+        val routeName = bundle?.getString("routeName")
+        val punctuation = bundle?.getString("punctuation")
+        val time = bundle?.getString("time")
+
+        findViewById<TextView>(R.id.routeName).text = routeName
+        findViewById<TextView>(R.id.punctuation).text = punctuation
+        findViewById<TextView>(R.id.time).text = time
+
 
         // Pulsar boton home nos lleva al inicio de la app
         val homeButton = findViewById<Button>(R.id.buttonBackHome);

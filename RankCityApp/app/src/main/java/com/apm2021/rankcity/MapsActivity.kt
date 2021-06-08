@@ -382,7 +382,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     // Here you get get input text from the Edittext
                     routeName = input.text.toString()
                     if (routeName != "") {
-                        val intent = Intent(this, InfoActivity::class.java)
+                        val intent = Intent(this, InfoActivity::class.java).apply {
+                            putExtra("routeName", routeName)
+                            putExtra("punctuation", punctuation.toString())
+                            putExtra("time", chronometer.text)
+                        }
+
                         startActivity(intent)
                         Toast.makeText(this, routeName , Toast.LENGTH_SHORT).show()
                     }else{
