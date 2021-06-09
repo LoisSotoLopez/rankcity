@@ -1,11 +1,16 @@
 package com.apm2021.rankcity
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.os.Parcelable
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+
 
 class InfoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,10 +22,13 @@ class InfoActivity : AppCompatActivity() {
         val routeName = bundle?.getString("routeName")
         val punctuation = bundle?.getString("punctuation")
         val time = bundle?.getString("time")
+        //val byteArray = bundle?.getByteArray("byteArray")
+        //val screenshot = intent.getParcelableExtra<Parcelable>("screenshot") as Bitmap?
 
         findViewById<TextView>(R.id.routeName).text = routeName
         findViewById<TextView>(R.id.punctuation).text = punctuation
         findViewById<TextView>(R.id.time).text = time
+        //findViewById<ImageView>(R.id.screenshot).setImageBitmap(byteArray?.toBitmap())
 
 
         // Pulsar boton home nos lleva al inicio de la app
@@ -49,4 +57,8 @@ class InfoActivity : AppCompatActivity() {
         super.onStop()
         finish()
     }
+
+    /**fun ByteArray.toBitmap():Bitmap{
+        return BitmapFactory.decodeByteArray(this,0,size)
+    }*/
 }

@@ -5,10 +5,12 @@ import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.graphics.Bitmap
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
+import android.os.Environment
 import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
@@ -22,6 +24,7 @@ import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMap.SnapshotReadyCallback
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
@@ -29,6 +32,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -48,6 +54,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var routeName: String
     var isTracking = true
     var addresses = mutableListOf<String>()
+    private lateinit var main: View
+    private lateinit var bitmap: Bitmap
+    private lateinit var byteArray: ByteArray
 
 /**var isFirstRun = true
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -66,6 +75,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         theme.applyStyle(R.style.primaryColors, true)
         setContentView(R.layout.activity_maps)
+
+        main = findViewById(R.id.maps_layout)
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -91,6 +102,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         stopButton.setOnClickListener {
             fusedLocationProviderClient.removeLocationUpdates(locationCallback)
             stopChronometer()
+            //bitmap = screenshot(main)
+            //snapShot()
+            //byteArray = bitmap.toByteArray()
             titleRouteDialog()
             GlobalScope.launch {
                 println("Llamada API, POST para añadir nueva ruta")
@@ -386,6 +400,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                             putExtra("routeName", routeName)
                             putExtra("punctuation", punctuation.toString())
                             putExtra("time", chronometer.text)
+                            //putExtra("byteArray", byteArray)
                         }
 
                         startActivity(intent)
@@ -430,5 +445,41 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         builder.show()
     }
+/**
+    private fun screenshot(view: View): Bitmap{
+        view.isDrawingCacheEnabled = true
+        view.buildDrawingCache(true)
+        val bitmap = Bitmap.createBitmap(view.drawingCache)
+        view.isDrawingCacheEnabled = false
+        return bitmap
+    }
+
+    fun Bitmap.toByteArray():ByteArray{
+        ByteArrayOutputStream().apply {
+            compress(Bitmap.CompressFormat.JPEG,10,this)
+            return toByteArray()
+        }
+    }
+
+    fun snapShot() {
+        val callback: SnapshotReadyCallback =
+            SnapshotReadyCallback { snapshot ->
+                if (snapshot != null) {
+                    bitmap = snapshot
+                }
+
+                try {
+                    val file = File(
+                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                        "map.png"
+                    )
+                    val fout = FileOutputStream(file)
+                    //bitmap!!.compress(Bitmap.CompressFormat.PNG, 90, fout)
+                } catch (e: java.lang.Exception) {
+                    e.printStackTrace()
+                }
+            }
+        mMap.snapshot(callback)
+    }*/
 
 }
