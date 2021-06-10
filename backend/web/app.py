@@ -306,5 +306,24 @@ def handle_street(street_id):
         return {"message": f"Calle {street.id} {street.name} successfully deleted."}
 
 
+@app.route('/ranking', methods=['GET'])
+def get_ranking():
+    if request.method == 'GET':
+        users = UserModel.query.all()
+        results = []
+        for user in users:
+            routes = RouteModel.query.filter_by(user=user.username)
+            total_score = 0
+            for route in routes:
+                total_score = total_score + route.score
+            results.append({
+                    "user": user.username, 
+                    "score": total_score}
+                    )
+            total_score = 0
+
+        return {"count": len(results), "users": results}
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
