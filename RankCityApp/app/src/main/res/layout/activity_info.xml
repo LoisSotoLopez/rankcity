@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/NameStyle"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/main_background"
@@ -14,7 +13,6 @@
         android:id="@+id/routeName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/roboto"
         android:gravity="center_horizontal"
         android:text="@string/congratulations"
         android:textSize="40sp" />
@@ -32,7 +30,6 @@
             android:layout_marginStart="@dimen/info_left_padding"
             android:layout_marginLeft="@dimen/info_left_padding"
             android:layout_weight="1"
-            android:fontFamily="@font/roboto"
             android:text="@string/score"
             android:textSize="@dimen/info_size" />
 
@@ -44,6 +41,7 @@
             android:layout_marginRight="@dimen/info_right_padding"
             android:layout_weight="1"
             android:fontFamily="@font/roboto"
+            android:text="1500"
             android:textSize="@dimen/info_size" />
     </LinearLayout>
 
@@ -60,7 +58,6 @@
             android:layout_marginStart="@dimen/info_left_padding"
             android:layout_marginLeft="@dimen/info_left_padding"
             android:layout_weight="1"
-            android:fontFamily="@font/roboto"
             android:text="@string/time"
             android:textSize="@dimen/info_size" />
 
@@ -72,6 +69,7 @@
             android:layout_marginRight="@dimen/info_right_padding"
             android:layout_weight="1"
             android:fontFamily="@font/roboto"
+            android:text="30:15"
             android:textSize="@dimen/info_size" />
     </LinearLayout>
 

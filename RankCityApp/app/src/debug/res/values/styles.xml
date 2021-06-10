@@ -2,7 +2,6 @@
 <resources>
 
     <style name="NameStyle">
-        <item name="android:fontFamily">@font/roboto</item>
         <item name="android:paddingTop">@dimen/small_padding</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
         <item name="android:textColor">@color/black</item>

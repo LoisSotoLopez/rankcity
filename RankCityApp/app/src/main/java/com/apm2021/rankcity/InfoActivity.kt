@@ -32,7 +32,7 @@ class InfoActivity : AppCompatActivity() {
 
 
         // Pulsar boton home nos lleva al inicio de la app
-        val homeButton = findViewById<Button>(R.id.buttonBackHome);
+        val homeButton = findViewById<Button>(R.id.buttonBackHome)
         // set on-click listener
         homeButton.setOnClickListener {
             Toast.makeText(this, "Return to home", Toast.LENGTH_SHORT).show()
@@ -40,7 +40,7 @@ class InfoActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val shareButton = findViewById<Button>(R.id.buttonShare);
+        val shareButton = findViewById<Button>(R.id.buttonShare)
         // set on-click listener
         shareButton.setOnClickListener {
             Toast.makeText(this, "Share route", Toast.LENGTH_SHORT).show()

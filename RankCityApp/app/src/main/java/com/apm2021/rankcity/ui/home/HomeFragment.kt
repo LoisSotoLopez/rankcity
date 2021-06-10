@@ -33,11 +33,12 @@ class HomeFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_home, container, false)
 
         // Boton a empezar
-        val startRouteButton = root.findViewById(R.id.period_change) as Button;
+        val startRouteButton = root.findViewById(R.id.period_change) as Button
         startRouteButton.setOnClickListener {
+            switchActivities()
             checkLocationPermission()
         }
-        return root;
+        return root
     }
 
     private fun switchActivities() {
