@@ -34,11 +34,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         setup()
-        resetPreferences()
         checkEula()
-    }
-
-    private fun onActivityResult() {
         session()
     }
 
@@ -54,7 +50,7 @@ class LoginActivity : AppCompatActivity() {
             if (nameInputText.text?.isNotEmpty() == true && passInputText.text?.isNotEmpty() == true) {
                 loginCoroutine(nameInputText.text.toString(), passInputText.text.toString())
             } else {
-                Toast.makeText(this, "Missing User/Password", Toast.LENGTH_SHORT).show()
+                showAlert("Missing User/Password")
             }
         }
 
@@ -64,7 +60,7 @@ class LoginActivity : AppCompatActivity() {
             if (nameInputText.text?.isNotEmpty() == true && passInputText.text?.isNotEmpty() == true) {
                 signInCoroutine(nameInputText.text.toString(),passInputText.text.toString())
             } else {
-                Toast.makeText(this, "User/Password missing", Toast.LENGTH_SHORT).show()
+                showAlert("User/Password missing")
             }
         }
 
@@ -152,6 +148,9 @@ class LoginActivity : AppCompatActivity() {
             ).addOnCompleteListener {
                 if (it.isSuccessful) {
                     //val triple = getUser(name); // TODO Retrieve required info here
+                    val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
+                    prefs.putString("email", it.result?.user?.email)
+                    prefs.apply()
                     showMain(it.result?.user?.email ?: "")
                 } else {
                     showAlert("Contraseña incorrecta")
@@ -300,12 +299,5 @@ class LoginActivity : AppCompatActivity() {
             intent.putExtras(bundle)
             startActivityForResult(intent, 1)
         }
-    }
-
-    // TODO : this function has testing purposes. Delete before prod.
-    private fun resetPreferences() {
-        var preferences = applicationContext
-            .getSharedPreferences("com.apm2021.rankcity", Context.MODE_PRIVATE)
-        preferences.edit().remove("email").apply()
     }
 }
