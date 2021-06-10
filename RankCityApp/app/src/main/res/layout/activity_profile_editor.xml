@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_background"
+    tools:context=".MainActivity">
+
+
+    <TextView
+        android:id="@+id/editProfileTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="28dp"
+        android:text="Editar Perfil"
+        android:textColor="@color/button_text"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/hometownInputText"
+        android:layout_width="367dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="24dp"
+        android:layout_weight="1"
+        android:background="@color/input_background"
+        android:hint="@string/edit_hometown_input_placeholder"
+        android:inputType="text"
+        android:maxLength="16"
+        android:paddingLeft="20dp"
+        android:textColor="@color/input_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editNickInputText" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/editNickInputText"
+        android:layout_width="364dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="28dp"
+        android:background="@color/input_background"
+        android:hint="@string/edit_nick_input_placeholder"
+        android:maxLength="16"
+        android:paddingLeft="20dp"
+        android:textColor="@color/input_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.468"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editProfileTitle" />
+
+    <Button
+        android:id="@+id/acceptProfileEditionButton"
+        android:layout_width="354dp"
+        android:layout_height="54dp"
+        android:layout_marginTop="312dp"
+        android:text="@string/accept_profile_editon_button_text"
+        android:textColor="@color/button_text"
+        app:backgroundTint="@color/button_primary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/hometownInputText" />
+
+    <Button
+        android:id="@+id/cancelProfileEditionButton"
+        android:layout_width="354dp"
+        android:layout_height="54dp"
+        android:text="@string/cancel_profile_editon_button_text"
+        android:textColor="@color/button_text"
+        app:backgroundTint="@color/button_primary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/acceptProfileEditionButton"
+        app:layout_constraintVertical_bias="0.362" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

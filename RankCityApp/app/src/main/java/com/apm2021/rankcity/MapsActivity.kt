@@ -3,22 +3,20 @@ package com.apm2021.rankcity
 import android.Manifest
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.graphics.Bitmap
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
-import android.location.LocationManager
 import android.os.Bundle
+import android.os.Environment
 import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.Chronometer
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -26,18 +24,20 @@ import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMap.SnapshotReadyCallback
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.text.SimpleDateFormat
 import java.util.*
 
-
-typealias Polyline = MutableList<LatLng>
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -51,6 +51,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
     private var currentLocation: Location? = null
+    private lateinit var routeName: String
+    var isTracking = true
+    var addresses = mutableListOf<String>()
+    private lateinit var main: View
+    private lateinit var bitmap: Bitmap
+    private lateinit var byteArray: ByteArray
 
 /**var isFirstRun = true
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -70,13 +76,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         theme.applyStyle(R.style.primaryColors, true)
         setContentView(R.layout.activity_maps)
 
+        main = findViewById(R.id.maps_layout)
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+        val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm")
+        val currentDate = sdf.format(Date())
+        Toast.makeText(this, currentDate, Toast.LENGTH_SHORT).show()
         chronometer = findViewById(R.id.chronometer)
-        startChronometer()
+        //startChronometer()
         findViewById<TextView>(R.id.punctuationText).text = punctuation.toString()
         fusedLocationProviderClient = FusedLocationProviderClient(this)
 /**postInitialValues()
@@ -89,10 +100,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val stopButton = findViewById<Button>(R.id.stopRouteButton) as FloatingActionButton
         // set on-click listener
         stopButton.setOnClickListener {
+            fusedLocationProviderClient.removeLocationUpdates(locationCallback)
             stopChronometer()
+            //bitmap = screenshot(main)
+            //snapShot()
+            //byteArray = bitmap.toByteArray()
+            titleRouteDialog()
             GlobalScope.launch {
                 println("Llamada API, POST para añadir nueva ruta")
-                /**val conn = URL("http://localhost:5000/routes").openConnection() as HttpURLConnection
+                /** EL POST DEBERÄ IR AL DARLE A OK EN EL DIALOGO DE TITULO DE RUTA
+                 * val conn = URL("http://localhost:5000/routes").openConnection() as HttpURLConnection
                 conn.requestMethod = "POST"
                 conn.connectTimeout = 300000
                 conn.doOutput = true
@@ -104,9 +121,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 "                \"score\": " + score +",\n" +
                 "            }"*/
             }
-            Toast.makeText(this, "Route finished", Toast.LENGTH_SHORT).show()
-            val intent = Intent(this, InfoActivity::class.java)
-            startActivity(intent)
         }
     }
 
@@ -116,8 +130,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         if (!checkPermissions()) {
             requestPermissions()
         } else {
-            startLocationTracking(true)
-            update()
+            startLocationTracking(isTracking)
+            startChronometer()
+            //update()
             /**getLocation()*/
         }
     }
@@ -276,7 +291,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             if (addresses != null) {
                 val returnedAddress: Address = addresses[0]
                 val strReturnedAddress = StringBuilder("")
-                for (i in 0..returnedAddress.getMaxAddressLineIndex()) {
+                for (i in 0..returnedAddress.maxAddressLineIndex) {
                     strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n")
                 }
                 strAdd = strReturnedAddress.toString().split(",")[0]
@@ -287,6 +302,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         } catch (e: Exception) {
             e.printStackTrace()
+            strAdd = "Invalid address"
             Log.w("Current loction address", "Canont get Address!")
         }
         return strAdd
@@ -299,12 +315,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    fun startChronometer() {
+    private fun startChronometer() {
         chronometer.base = SystemClock.elapsedRealtime() - pauseOffSet
         chronometer.start()
     }
 
-    fun stopChronometer() {
+    private fun stopChronometer() {
         chronometer.stop()
         pauseOffSet = SystemClock.elapsedRealtime() - chronometer.base
     }
@@ -332,8 +348,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun update(){
         val latLngs = mutableListOf<LatLng>()
-        var currentAddress: String = "Isaac Peral"
-        var addresses = mutableListOf<String>()
+        var currentAddress: String
         locationCallback = object : LocationCallback() {
             @SuppressLint("MissingPermission")
             override fun onLocationResult(locationResult: LocationResult) {
@@ -353,8 +368,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     //Print the route
                     printPolyline(latLngs)
                     //Increase punctuation depending on the street
-                    increasePunctuation(currentAddress, addresses)
-                    addresses.add(currentAddress)
+                    if(currentAddress != "Invalid address") {
+                        increasePunctuation(currentAddress, addresses)
+                        addresses.add(currentAddress)
+                    }
                     Log.w("Direccion actual ", currentAddress)
                     Log.w("Array ", addresses.last().toString())
                     Log.w("Punctuation ", punctuation.toString())
@@ -363,57 +380,106 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    private fun titleRouteDialog(){
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Dale un título a la ruta")
 
-/**private fun addEmptyPolyline() = pathPoints.value?.apply {
-        add(mutableListOf())
-        pathPoints.postValue(this)
-    } ?: pathPoints.postValue(mutableListOf(mutableListOf()))
+        // Set up the input
+        val input = EditText(this)
+        // Specify the type of input expected
+        input.setHint("Enter Text")
+        builder.setView(input)
 
-    val locationCallback = object : LocationCallback() {
-        override fun onLocationResult(result: LocationResult?) {
-            super.onLocationResult(result)
-            if(isTracking.value!!) {
-                result?.locations?.let { locations ->
-                    for(location in locations) {
-                        addPathPoint(location)
+
+                // Set up the buttons
+                builder.setPositiveButton("OK") { dialog, i ->
+                    // Here you get get input text from the Edittext
+                    routeName = input.text.toString()
+                    if (routeName != "") {
+                        val intent = Intent(this, InfoActivity::class.java).apply {
+                            putExtra("routeName", routeName)
+                            putExtra("punctuation", punctuation.toString())
+                            putExtra("time", chronometer.text)
+                            //putExtra("byteArray", byteArray)
+                        }
+
+                        startActivity(intent)
+                        Toast.makeText(this, routeName , Toast.LENGTH_SHORT).show()
+                    }else{
+                        titleRouteDialog()
+                        Toast.makeText(this, "Debes darle un título a la ruta", Toast.LENGTH_SHORT).show()
                     }
                 }
-            }
+
+                builder.setNegativeButton("Cancel") {
+                        dialog, which -> dialog.cancel()
+                        startChronometer()
+                        startLocationTracking(isTracking)
+                }
+
+
+        builder.show()
+    }
+
+    override fun onBackPressed() {
+        //super.onBackPressed()
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+        stopChronometer()
+        exitDialog()
+
+    }
+
+    private fun exitDialog(){
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("¿Estás seguro de que quieres salir de la ruta?")
+
+        // Set up the buttons
+        builder.setPositiveButton("Sí") { dialog, i ->
+            finish()
+        }
+
+        builder.setNegativeButton("No") {
+                dialog, which -> dialog.cancel()
+            startChronometer()
+            startLocationTracking(isTracking)
+        }
+        builder.show()
+    }
+/**
+    private fun screenshot(view: View): Bitmap{
+        view.isDrawingCacheEnabled = true
+        view.buildDrawingCache(true)
+        val bitmap = Bitmap.createBitmap(view.drawingCache)
+        view.isDrawingCacheEnabled = false
+        return bitmap
+    }
+
+    fun Bitmap.toByteArray():ByteArray{
+        ByteArrayOutputStream().apply {
+            compress(Bitmap.CompressFormat.JPEG,10,this)
+            return toByteArray()
         }
     }
 
-    @SuppressLint("MissingPermission")
-    private fun updateLocationTracking(isTracking: Boolean){
-        if(isTracking){
-            val request = LocationRequest().apply {
-                interval = 5000L
-                fastestInterval = 2000L
-                priority = PRIORITY_HIGH_ACCURACY
+    fun snapShot() {
+        val callback: SnapshotReadyCallback =
+            SnapshotReadyCallback { snapshot ->
+                if (snapshot != null) {
+                    bitmap = snapshot
+                }
+
+                try {
+                    val file = File(
+                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                        "map.png"
+                    )
+                    val fout = FileOutputStream(file)
+                    //bitmap!!.compress(Bitmap.CompressFormat.PNG, 90, fout)
+                } catch (e: java.lang.Exception) {
+                    e.printStackTrace()
+                }
             }
-            fusedLocationProviderClient.requestLocationUpdates(
-                request, locationCallback, Looper.getMainLooper()
-                )
-
-        } else {
-            fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-        }
-    }
-
-    private fun addPathPoint(location: Location?){
-        location?.let {
-            val pos = LatLng(location.latitude, location.longitude)
-            pathPoints.value?.apply {
-                last().add(pos)
-                pathPoints.postValue(this)
-            }
-        }
-    }
-
-    private fun startForegroundService() {
-        addEmptyPolyline()
-        isTracking.postValue(true)
-
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE)
-                as NotificationManager
+        mMap.snapshot(callback)
     }*/
+
 }

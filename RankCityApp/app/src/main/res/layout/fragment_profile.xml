@@ -12,40 +12,15 @@
         android:id="@+id/ProfileUsername"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="36dp"
         android:text="NombreUser"
         android:textColor="@color/button_text"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintHorizontal_bias="0.741"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imgPhoto" />
-
-    <TextView
-        android:id="@+id/ProfileCityName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="CityName"
-        android:textColor="@color/button_text"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ProfileUsername" />
-
-    <TextView
-        android:id="@+id/ProfileCountryName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="CountryName"
-        android:textColor="@color/button_text"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ProfileCityName" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!--
 
@@ -78,6 +53,32 @@
         tools:listitem="@android:layout/expandable_list_content" />
      -->
     <TextView
+        android:id="@+id/ProfileCityName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="CityName"
+        android:textColor="@color/button_text"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.697"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ProfileUsername" />
+
+    <TextView
+        android:id="@+id/ProfileCountryName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="CountryName"
+        android:textColor="@color/button_text"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.726"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ProfileCityName" />
+
+    <TextView
         android:id="@+id/ProfileRoutesName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -88,7 +89,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.103"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ProfileCountryName" />
+        app:layout_constraintTop_toBottomOf="@+id/imgPhoto" />
 
     <ImageView
         android:id="@+id/imgPhoto"
@@ -97,7 +98,7 @@
         android:layout_marginTop="16dp"
         android:src="@drawable/ic_profile"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.055"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -105,11 +106,13 @@
         android:id="@+id/period_change"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:background="@color/button_primary"
         android:text="@string/periodo"
         android:textColor="@color/button_text"
         app:backgroundTint="@color/button_primary"
-        app:layout_constraintTop_toBottomOf="@+id/ProfileRoutesName" />
+        app:layout_constraintTop_toBottomOf="@+id/ProfileRoutesName"
+        tools:layout_editor_absoluteX="0dp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
@@ -123,13 +126,13 @@
         android:id="@+id/cameraButton"
         android:layout_width="43dp"
         android:layout_height="45dp"
-        android:layout_marginTop="96dp"
+        android:layout_marginTop="84dp"
         android:clickable="true"
         android:src="@drawable/ic_camera"
         app:backgroundTint="@color/button_primary"
         app:fabCustomSize="45dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.646"
+        app:layout_constraintHorizontal_bias="0.287"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/imgPhoto" />
 

@@ -32,19 +32,33 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".MapsActivity"></activity>
-        <activity android:name=".MainActivity"></activity>
-        <activity android:name=".InfoActivity"></activity>
-        <activity android:name=".EulaActivity"></activity>
+        <activity
+            android:name=".MapsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="fullSensor" />
+        <activity
+            android:name=".InfoActivity"
+            android:label="Información de ruta"
+            android:screenOrientation="portrait" />
+        <activity 
+			android:name=".EulaActivity" />
+
         <activity
             android:name=".LoginActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ProfileEditorActivity"
+            android:label="Edición de perfil"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

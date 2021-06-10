@@ -3,19 +3,18 @@ package com.apm2021.rankcity
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.textfield.TextInputEditText
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.*
 import kotlinx.coroutines.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -23,6 +22,7 @@ import java.io.DataOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.Charset
+
 
 class LoginActivity : AppCompatActivity() {
 
@@ -83,16 +83,43 @@ class LoginActivity : AppCompatActivity() {
     }
 
     suspend fun signIn(name: String, pass: String)=coroutineScope {
-        launch {
-            FirebaseAuth.getInstance().createUserWithEmailAndPassword(
-                name,
-                pass).addOnCompleteListener {
-                if (it.isSuccessful && postUser(name)) {
-                    showMain(it.result?.user?.email ?: "", ProviderType.BASIC)
-                } else {
-                    showAlert("No se pudo registrar")
+        try {
+            launch {
+                FirebaseAuth.getInstance().createUserWithEmailAndPassword(
+                    name,
+                    pass).addOnCompleteListener {
+                    //if (it.isSuccessful && postUser(name)) {
+                    // TODO: Add user entry on backend
+                    if (it.isSuccessful) {
+                        showEditProfile(it.result?.user?.email ?: "")
+                    } else {
+                        val errorCode = (it.getException() as FirebaseAuthException).errorCode
+                        when (errorCode) {
+                            "ERROR_INVALID_EMAIL" -> {
+                                showAlert("Ese correo no tiene buena pinta.\n" +
+                                        "Escribe algo como esot@lootro.com")
+                            }
+                            "ERROR_EMAIL_ALREADY_IN_USE" -> {
+                                showAlert("Ese correo ya ha sido usado para crear otra cuenta.")
+                            }
+                            "ERROR_WEAK_PASSWORD" -> {
+                                showAlert("Esa contraseña es demasiado débil.")
+                            }
+                            else ->
+                                showAlert("Algo no fue bien")
+                        }
+
+                    }
                 }
             }
+        } catch (e: FirebaseAuthWeakPasswordException) {
+            showAlert("Esa contraseña es muy débil.")
+        } catch (e: FirebaseAuthInvalidCredentialsException) {
+            showAlert("Eso que has puesto no parece un correo. Pon algo tipo esto@lo-otro.com")
+        } catch (e: FirebaseAuthUserCollisionException) {
+            showAlert("Ese correo ya tiene una cuenta asociada")
+        } catch (e: java.lang.Exception) {
+            showAlert("No se pudo registrar")
         }
     }
 
@@ -125,7 +152,7 @@ class LoginActivity : AppCompatActivity() {
             ).addOnCompleteListener {
                 if (it.isSuccessful) {
                     //val triple = getUser(name); // TODO Retrieve required info here
-                    showMain(it.result?.user?.email ?: "", ProviderType.BASIC)
+                    showMain(it.result?.user?.email ?: "")
                 } else {
                     showAlert("Contraseña incorrecta")
                 }
@@ -142,12 +169,11 @@ class LoginActivity : AppCompatActivity() {
     private fun session() {
         val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
         val email = prefs.getString("email", null)
-        val provider = prefs.getString("provider", null)
         val loginLayout = findViewById<LinearLayout>(R.id.loginLayout)
 
-        if (email != null && provider != null) {
+        if (email != null) {
             loginLayout.visibility = View.INVISIBLE
-            showMain(email, ProviderType.valueOf(provider))
+            showMain(email)
         }
     }
 
@@ -166,7 +192,7 @@ class LoginActivity : AppCompatActivity() {
                     FirebaseAuth.getInstance().signInWithCredential(credential)
                         .addOnCompleteListener {
                             if (it.isSuccessful) {
-                                showMain(account.email ?: "", ProviderType.GOOGLE)
+                                showMain(account.email ?: "")
                             } else {
                                 showAlert( "Falló la comunicación con Firebase")
                             }
@@ -189,7 +215,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun postUser(userid: String) : Boolean{
-        val conn = URL("http://192.168.1.65:5000/users/").openConnection() as HttpURLConnection
+        val conn = URL("http://localhost:5000/users/" + userid).openConnection() as HttpURLConnection
         conn.requestMethod = "POST"
         conn.connectTimeout = 300000
         conn.doOutput = true
@@ -198,10 +224,9 @@ class LoginActivity : AppCompatActivity() {
                 "                \"username\": " + userid +",\n" +
                 "                \"name\": " + userid +",\n" +
                 "                \"email\": " + userid +"\n" +
-                "                \"accept_eula\": " + true +"\n" +
                 "            }"
         val postData: ByteArray =
-            message.toByteArray(Charset.forName("UTF-8"))
+                message.toByteArray(Charset.forName("UTF-8"))
 
         conn.setRequestProperty("charset", "utf-8")
         conn.setRequestProperty("Content-length", postData.size.toString())
@@ -228,12 +253,39 @@ class LoginActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    private fun showMain(email: String, provider: ProviderType) {
+    private fun showMain(email: String) {
         val mainIntent = Intent(this, MainActivity::class.java).apply {
             putExtra("email", email)
-            putExtra("provider", provider.name)
         }
         startActivity(mainIntent)
+    }
+
+    private fun showEditProfile(email: String) {
+        val profileEditorIntent = Intent(this, ProfileEditorActivity::class.java).apply {
+            putExtra("email", email)
+            putExtra("mandatory", true)
+        }
+        startActivity(profileEditorIntent)
+    }
+
+    override fun onBackPressed() {
+        //super.onBackPressed()
+        exitDialog()
+    }
+
+    private fun exitDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("¿Estás seguro de que quieres salir de RankCity?")
+
+        // Set up the buttons
+        builder.setPositiveButton("Sí") { dialog, i ->
+            finish()
+        }
+
+        builder.setNegativeButton("No") { dialog, which ->
+            dialog.cancel()
+        }
+        builder.show()
     }
 
     private fun checkEula() {
@@ -255,6 +307,5 @@ class LoginActivity : AppCompatActivity() {
         var preferences = applicationContext
             .getSharedPreferences("com.apm2021.rankcity", Context.MODE_PRIVATE)
         preferences.edit().remove("email").apply()
-        preferences.edit().remove("provider").apply()
     }
 }
