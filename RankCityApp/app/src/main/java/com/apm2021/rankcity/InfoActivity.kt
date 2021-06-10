@@ -1,15 +1,17 @@
 package com.apm2021.rankcity
 
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.os.Parcelable
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import org.json.JSONObject
 
 
 class InfoActivity : AppCompatActivity() {
@@ -24,6 +26,21 @@ class InfoActivity : AppCompatActivity() {
         val time = bundle?.getString("time")
         //val byteArray = bundle?.getByteArray("byteArray")
         //val screenshot = intent.getParcelableExtra<Parcelable>("screenshot") as Bitmap?
+
+        val date = "10-10-2010"
+        val street = JSONObject()
+        street.put("name", "hola")
+        street.put("score", 10)
+        val street2 = JSONObject()
+        street2.put("name", "hola2")
+        street2.put("score", 20)
+        val streets = listOf<JSONObject>(street, street2)
+        val userId = "alejoncv"
+//        // API call
+//        CHange global scope
+        GlobalScope.launch {
+            addRouteAPI(userId, routeName, date, 50, 100, streets)
+        }
 
         findViewById<TextView>(R.id.routeName).text = routeName
         findViewById<TextView>(R.id.punctuation).text = punctuation
@@ -47,6 +64,38 @@ class InfoActivity : AppCompatActivity() {
         }
     }
 
+    private fun addRouteAPI(userId: String, title: String?, date: String, time: Int, score: Int, streets: List<JSONObject>) {
+        // Instantiate the RequestQueue.
+        val queue = Volley.newRequestQueue(this)
+        val url = "http://192.168.1.58:5000/routes/user/"+userId
+
+        // TODO generar random ids
+        val jsonObject = JSONObject()
+        jsonObject.put("title", title)
+        jsonObject.put("date", date)
+        jsonObject.put("time", time)
+        jsonObject.put("score", score)
+        jsonObject.put("streets", streets)
+
+        val jsonRequest = JsonObjectRequest(url, jsonObject, {}, {})
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest)
+    }
+
+//    private fun addStreetAPI(currentAddress: String?) {
+//        // Instantiate the RequestQueue.
+//        val queue = Volley.newRequestQueue(this)
+//        val url = "http://192.168.1.58:5000/streets"
+//
+//        // TODO generar random ids
+//        val jsonObject = JSONObject()
+//        jsonObject.put("name", currentAddress)
+//
+//        val jsonRequest = JsonObjectRequest(url, jsonObject, {}, {})
+//        // Add the request to the RequestQueue.
+//        queue.add(jsonRequest)
+//    }
+
     override fun onBackPressed() {
         super.onBackPressed()
         val intent = Intent(this, MainActivity::class.java)
@@ -59,6 +108,6 @@ class InfoActivity : AppCompatActivity() {
     }
 
     /**fun ByteArray.toBitmap():Bitmap{
-        return BitmapFactory.decodeByteArray(this,0,size)
+    return BitmapFactory.decodeByteArray(this,0,size)
     }*/
 }

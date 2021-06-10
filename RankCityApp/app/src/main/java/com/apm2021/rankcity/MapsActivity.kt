@@ -20,6 +20,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -32,6 +34,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -106,22 +109,27 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             //snapShot()
             //byteArray = bitmap.toByteArray()
             titleRouteDialog()
-            GlobalScope.launch {
-                println("Llamada API, POST para añadir nueva ruta")
-                /** EL POST DEBERÄ IR AL DARLE A OK EN EL DIALOGO DE TITULO DE RUTA
-                 * val conn = URL("http://localhost:5000/routes").openConnection() as HttpURLConnection
-                conn.requestMethod = "POST"
-                conn.connectTimeout = 300000
-                conn.doOutput = true
-                val message = " {\n" +
-                "                \"route\": " + routeid +",\n" +
-                "                \"title\": " + title +",\n" +
-                "                \"date\": " + date +"\n" +
-                "                \"user\": " + userid +",\n" +
-                "                \"score\": " + score +",\n" +
-                "            }"*/
-            }
+            // La llamada a la API tiene más sentido en la info activity después de poner el nombre
+            // de la ruta, así tenemos toda la info
         }
+    }
+
+    private fun addRouteAPI(userId: String, title: String, date: String, time: Int, score: Int, streets: List<String>) {
+        // Instantiate the RequestQueue.
+        val queue = Volley.newRequestQueue(this)
+        val url = "http://192.168.1.58:5000/routes/user/"+userId
+
+        // TODO generar random ids
+        val jsonObject = JSONObject()
+        jsonObject.put("title", title)
+        jsonObject.put("date", date)
+        jsonObject.put("time", time)
+        jsonObject.put("score", score)
+        jsonObject.put("streets", streets)
+
+        val jsonRequest = JsonObjectRequest(url, jsonObject, {}, {})
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest)
     }
 
     override fun onStart() {
@@ -365,6 +373,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     latLngs.add(location)
                     //Get the name of the street
                     currentAddress = getCompleteAddressString(location.latitude, location.longitude)
+
                     //Print the route
                     printPolyline(latLngs)
                     //Increase punctuation depending on the street
