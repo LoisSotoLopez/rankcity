@@ -42,10 +42,8 @@ class LoginActivity : AppCompatActivity() {
 
         val nameInputText = findViewById<TextInputEditText>(R.id.UserEmailInputText)
         val passInputText = findViewById<TextInputEditText>(R.id.PasswordInputText)
-        // Pulsar boton login nos lleva al inicio de la app
         val loginButton = findViewById<Button>(R.id.loginButton)
 
-        // set on-click listener
         loginButton.setOnClickListener {
             if (nameInputText.text?.isNotEmpty() == true && passInputText.text?.isNotEmpty() == true) {
                 loginCoroutine(nameInputText.text.toString(), passInputText.text.toString())
@@ -55,7 +53,6 @@ class LoginActivity : AppCompatActivity() {
         }
 
         val registerButton = findViewById<Button>(R.id.registerButton)
-        // set on-click listener
         registerButton.setOnClickListener {
             if (nameInputText.text?.isNotEmpty() == true && passInputText.text?.isNotEmpty() == true) {
                 signInCoroutine(nameInputText.text.toString(),passInputText.text.toString())
@@ -64,10 +61,7 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-
         val loginButtonGoogle = findViewById<Button>(R.id.loginButtonGoogle)
-
-        // set on-click listener
         loginButtonGoogle.setOnClickListener {
             googleLoginCoroutine(this)
         }
