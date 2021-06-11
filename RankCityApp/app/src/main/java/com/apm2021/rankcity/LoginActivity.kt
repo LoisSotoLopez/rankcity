@@ -10,6 +10,8 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -90,6 +92,8 @@ class LoginActivity : AppCompatActivity() {
                     pass).addOnCompleteListener {
                     //if (it.isSuccessful && postUser(name)) {
                     // TODO: Add user entry on backend
+                    // review parameters
+                    addUserAPI(name, name, name, true)
                     if (it.isSuccessful) {
                         showEditProfile(it.result?.user?.email ?: "")
                     } else {
@@ -108,7 +112,6 @@ class LoginActivity : AppCompatActivity() {
                             else ->
                                 showAlert("Algo no fue bien")
                         }
-
                     }
                 }
             }
@@ -121,6 +124,22 @@ class LoginActivity : AppCompatActivity() {
         } catch (e: java.lang.Exception) {
             showAlert("No se pudo registrar")
         }
+    }
+
+    private fun addUserAPI(username: String, name: String, email: String, accept_eula: Boolean) {
+        // Instantiate the RequestQueue.
+        val queue = Volley.newRequestQueue(this)
+        val url = "http://192.168.1.58:5000/users"
+
+        val jsonObject = JSONObject()
+        jsonObject.put("username", username)
+        jsonObject.put("name", name)
+        jsonObject.put("email", email)
+        jsonObject.put("accept_eula", accept_eula)
+
+        val jsonRequest = JsonObjectRequest(url, jsonObject, {}, {})
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest)
     }
 
     private fun googleLoginCoroutine(activity: Activity)=runBlocking {
