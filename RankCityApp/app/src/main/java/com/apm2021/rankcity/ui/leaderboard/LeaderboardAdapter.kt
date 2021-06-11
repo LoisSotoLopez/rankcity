@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.apm2021.rankcity.R
 
-class LeaderboardAdapter(val routesList: Array<String>) :
+class LeaderboardAdapter(val routesList: List<String>) :
         RecyclerView.Adapter<LeaderboardAdapter.LeaderboardViewHolder>() {
 
     // Describes an item view and its place within the RecyclerView
@@ -34,6 +34,6 @@ class LeaderboardAdapter(val routesList: Array<String>) :
 
     // Displays data at a certain position
     override fun onBindViewHolder(holder: LeaderboardViewHolder, position: Int) {
-        holder.bind(routesList[position])
+        holder.bind(routesList[position] as String)
     }
 }

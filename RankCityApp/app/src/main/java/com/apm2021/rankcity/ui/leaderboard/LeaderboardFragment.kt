@@ -8,8 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.apm2021.rankcity.R
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class LeaderboardFragment : Fragment() {
 
