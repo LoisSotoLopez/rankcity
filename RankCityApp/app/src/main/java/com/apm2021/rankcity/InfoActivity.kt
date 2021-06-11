@@ -34,9 +34,10 @@ class InfoActivity : AppCompatActivity() {
         val sharedPreferences: SharedPreferences =
             this.getSharedPreferences("user_data_file", Context.MODE_PRIVATE)
         val userId = sharedPreferences.getString("userId","").toString()
-        val data = JSONObject("""{"name":"caxe", "score":25}""")
-        val data2 = JSONObject("""{"name":"caxe2", "score":35}""")
-        val streets= JSONArray(listOf(data, data2))
+//        val data = JSONObject("""{"name":"caxe", "score":25}""")
+//        val data2 = JSONObject("""{"name":"caxe2", "score":35}""")
+//        val streets= JSONArray(listOf(data, data2))
+        val streets =  JSONArray(getIntent().getStringExtra("addresses_score"));
         GlobalScope.launch {
             addRouteAPI(userId, routeName, currentDate, time, punctuation, streets)
         }

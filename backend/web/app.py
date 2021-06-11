@@ -32,7 +32,7 @@ class RouteModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String())
     date = db.Column(db.DateTime())
-    time = db.Column(db.Integer)
+    time = db.Column(db.String())
     user = db.Column(db.String(), db.ForeignKey('user.username'))
     score = db.Column(db.Float())
 
@@ -177,7 +177,7 @@ def get_routes_user(user_id):
             route['streets'] = list_streets
             list_streets = []
 
-        return {"count": len(results), "routes": results}
+        return {"rutas": results}
 
     elif request.method == 'POST':
         if request.is_json:
@@ -190,7 +190,7 @@ def get_routes_user(user_id):
                 street_name = street['name']
 
                 street_db = StreetModel.query.filter_by(name=street_name).first()
-                if street_db is None:
+                if street_db is not None:
                     street_db = street_db[0]
                 else:
                     street_db = StreetModel(name=street_name)
@@ -213,7 +213,13 @@ def handle_users():
             new_user = UserModel(username=data['username'], name=data['name'], email=data['email'], accept_eula=data['accept_eula'])
             db.session.add(new_user)
             db.session.commit()
-            return {"message": f"User {new_user.__repr__()} has been created successfully."}
+            response = {
+                "username": new_user.username,
+                "name": new_user.name,
+                "email": new_user.email,
+                "accept_eula": new_user.accept_eula
+            }
+            return response
         else:
             return {"error": "The request payload is not in JSON format"}
 
@@ -241,7 +247,7 @@ def handle_user(user_id):
             "email": user.email,
             "accept_eula": user.accept_eula
         }
-        return {"message": "success", "user": response}
+        return response
 
     elif request.method == 'PUT':
         data = request.get_json()

@@ -34,6 +34,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -57,6 +58,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var routeName: String
     var isTracking = true
     var addresses = mutableListOf<String>()
+    var addresses_score = JSONArray()
     private lateinit var main: View
     private lateinit var bitmap: Bitmap
     private lateinit var byteArray: ByteArray
@@ -321,6 +323,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         if (currentAddress !in addresses && currentAddress != null){
             punctuation += 100
             findViewById<TextView>(R.id.punctuationText).text = punctuation.toString()
+            val json = JSONObject()
+            json.put("name", currentAddress)
+            json.put("score", 100)
+            addresses_score.put(json)
+        }
+        else {
+            punctuation += 50
+            findViewById<TextView>(R.id.punctuationText).text = punctuation.toString()
+            val json = JSONObject()
+            json.put("name", currentAddress)
+            json.put("score", 50)
+            addresses_score.put(json)
         }
     }
 
@@ -411,6 +425,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                             putExtra("punctuation", punctuation.toString())
                             putExtra("time", chronometer.text)
                             putExtra("currentDate", currentDate)
+                            putExtra("addresses_score", addresses_score.toString())
                             //putExtra("byteArray", byteArray)
                         }
 
