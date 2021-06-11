@@ -2,6 +2,7 @@ package com.apm2021.rankcity
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -12,6 +13,9 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.android.volley.Request
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
@@ -36,10 +40,33 @@ class MainActivity : AppCompatActivity() {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(setOf(
-                R.id.navigation_home, R.id.navigation_leaderboard, R.id.navigation_profile))
+            R.id.navigation_home, R.id.navigation_leaderboard, R.id.navigation_profile))
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
+    }
+
+    private fun getUserRoutesFrom_API(userid: String) {
+        val requestQueue = Volley.newRequestQueue(this)
+        val url = "http://192.168.1.58:5000/routes/user/$userid"
+        val jsonObjectRequest = JsonObjectRequest(
+            Request.Method.GET, url, null,
+            { response ->
+//                println("RUUUUUUUUUUUUUUUUUTAS"+response)
+                val sharedPreferences: SharedPreferences =
+                    this.getSharedPreferences("user_routes_file", MODE_PRIVATE)
+                val editor: SharedPreferences.Editor = sharedPreferences.edit()
+                editor.putString("userId", response.getString("username"))
+                editor.apply()
+                editor.commit()
+//                println(sharedPreferences.getString("userId", "holahola"))
+            },
+            { error ->
+                // TODO: Handle error
+                println("ERROR API CONECCTION")
+            }
+        )
+        requestQueue.add(jsonObjectRequest)
     }
 
     override fun onBackPressed() {

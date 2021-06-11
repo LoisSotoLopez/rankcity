@@ -51,7 +51,6 @@ class ProfileFragment : Fragment() {
 
         val datesList = Datasource_Profile(this).getDatesList()
 
-
         val recyclerView = itemView.findViewById<RecyclerView>(R.id.recycler_view)
         //GlobalScope.launch {
         recyclerView.apply {

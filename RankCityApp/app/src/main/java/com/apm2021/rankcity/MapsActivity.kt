@@ -60,6 +60,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var main: View
     private lateinit var bitmap: Bitmap
     private lateinit var byteArray: ByteArray
+    private lateinit var currentDate: String
 
 /**var isFirstRun = true
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -87,7 +88,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
 
         val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm")
-        val currentDate = sdf.format(Date())
+        currentDate = sdf.format(Date())
         Toast.makeText(this, currentDate, Toast.LENGTH_SHORT).show()
         chronometer = findViewById(R.id.chronometer)
         //startChronometer()
@@ -114,23 +115,23 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun addRouteAPI(userId: String, title: String, date: String, time: Int, score: Int, streets: List<String>) {
-        // Instantiate the RequestQueue.
-        val queue = Volley.newRequestQueue(this)
-        val url = "http://192.168.1.58:5000/routes/user/"+userId
-
-        // TODO generar random ids
-        val jsonObject = JSONObject()
-        jsonObject.put("title", title)
-        jsonObject.put("date", date)
-        jsonObject.put("time", time)
-        jsonObject.put("score", score)
-        jsonObject.put("streets", streets)
-
-        val jsonRequest = JsonObjectRequest(url, jsonObject, {}, {})
-        // Add the request to the RequestQueue.
-        queue.add(jsonRequest)
-    }
+//    private fun addRouteAPI(userId: String, title: String, date: String, time: Int, score: Int, streets: List<String>) {
+//        // Instantiate the RequestQueue.
+//        val queue = Volley.newRequestQueue(this)
+//        val url = "http://192.168.1.58:5000/routes/user/"+userId
+//
+//        // TODO generar random ids
+//        val jsonObject = JSONObject()
+//        jsonObject.put("title", title)
+//        jsonObject.put("date", date)
+//        jsonObject.put("time", time)
+//        jsonObject.put("score", score)
+//        jsonObject.put("streets", streets)
+//
+//        val jsonRequest = JsonObjectRequest(url, jsonObject, {}, {})
+//        // Add the request to the RequestQueue.
+//        queue.add(jsonRequest)
+//    }
 
     override fun onStart() {
         super.onStart()
@@ -409,6 +410,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                             putExtra("routeName", routeName)
                             putExtra("punctuation", punctuation.toString())
                             putExtra("time", chronometer.text)
+                            putExtra("currentDate", currentDate)
                             //putExtra("byteArray", byteArray)
                         }
 

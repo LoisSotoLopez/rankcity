@@ -3,6 +3,7 @@ package com.apm2021.rankcity
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -10,6 +11,9 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -18,12 +22,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.*
 import kotlinx.coroutines.*
-import org.json.JSONException
 import org.json.JSONObject
-import java.io.DataOutputStream
-import java.net.HttpURLConnection
-import java.net.URL
-import java.nio.charset.Charset
 
 
 class LoginActivity : AppCompatActivity() {
@@ -93,7 +92,9 @@ class LoginActivity : AppCompatActivity() {
                     //if (it.isSuccessful && postUser(name)) {
                     // TODO: Add user entry on backend
                     // review parameters
-                    addUserAPI(name, name, name, true)
+                    val email = name
+                    val username = name.split("@")[0]
+                    addUserAPI(username, email, email, true)
                     if (it.isSuccessful) {
                         showEditProfile(it.result?.user?.email ?: "")
                     } else {
@@ -137,7 +138,17 @@ class LoginActivity : AppCompatActivity() {
         jsonObject.put("email", email)
         jsonObject.put("accept_eula", accept_eula)
 
-        val jsonRequest = JsonObjectRequest(url, jsonObject, {}, {})
+        val jsonRequest = JsonObjectRequest(url, jsonObject, {
+                response ->
+            val sharedPreferences: SharedPreferences = this.getSharedPreferences("user_data_file", Context.MODE_PRIVATE)
+            val editor: SharedPreferences.Editor = sharedPreferences.edit()
+            editor.putString("userId", response.getString("username"))
+            editor.putString("name", response.getString("name"))
+            editor.putString("email", response.getString("email"))
+            editor.putBoolean("accept_eula", response.getBoolean("accept_eula"))
+            editor.apply()
+            editor.commit()
+        }, {})
         // Add the request to the RequestQueue.
         queue.add(jsonRequest)
     }
@@ -170,7 +181,7 @@ class LoginActivity : AppCompatActivity() {
                 pass
             ).addOnCompleteListener {
                 if (it.isSuccessful) {
-                    //val triple = getUser(name); // TODO Retrieve required info here
+                    getUserFrom_API(name); // TODO Retrieve required info here
                     showMain(it.result?.user?.email ?: "")
                 } else {
                     showAlert("Contraseña incorrecta")
@@ -223,43 +234,29 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun getUser(userid: String): Triple<Any, Any, Any> {
-        val result = URL("http://localhost:5000/users/" + userid).readText()
-        val jsonObject = JSONObject(result)
-        try {
-            return Triple(jsonObject.get("username"), jsonObject.get("name"), jsonObject.get("email"))
-        } catch (e: JSONException) {
-            return Triple("null","null","null")
-        }
-    }
-
-    private fun postUser(userid: String) : Boolean{
-        val conn = URL("http://localhost:5000/users/" + userid).openConnection() as HttpURLConnection
-        conn.requestMethod = "POST"
-        conn.connectTimeout = 300000
-        conn.doOutput = true
-
-        val message = " {\n" +
-                "                \"username\": " + userid +",\n" +
-                "                \"name\": " + userid +",\n" +
-                "                \"email\": " + userid +"\n" +
-                "            }"
-        val postData: ByteArray =
-                message.toByteArray(Charset.forName("UTF-8"))
-
-        conn.setRequestProperty("charset", "utf-8")
-        conn.setRequestProperty("Content-length", postData.size.toString())
-        conn.setRequestProperty("Content-Type", "application/json")
-
-        try {
-            val outputStream: DataOutputStream = DataOutputStream(conn.outputStream)
-            outputStream.write(postData)
-            outputStream.flush()
-        } catch (exception: Exception) {
-
-        }
-
-        return (conn.responseCode == HttpURLConnection.HTTP_OK)
+    private fun getUserFrom_API(userid: String) {
+        val requestQueue = Volley.newRequestQueue(this)
+        val userid_aux = userid.split("@")[0]
+        val url = "http://192.168.1.58:5000/users/$userid_aux"
+        val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
+            { response ->
+//                println("RESPONSEEEEEEEEEEEEEE"+response)
+                val sharedPreferences: SharedPreferences = this.getSharedPreferences("user_data_file", Context.MODE_PRIVATE)
+                val editor: SharedPreferences.Editor = sharedPreferences.edit()
+                editor.putString("userId", response.getString("username"))
+                editor.putString("name", response.getString("name"))
+                editor.putString("email", response.getString("email"))
+                editor.putBoolean("accept_eula", response.getBoolean("accept_eula"))
+                editor.apply()
+                editor.commit()
+//                println(sharedPreferences.getString("userId", "holahola"))
+            },
+            { error ->
+                // TODO: Handle error
+                println("ERROR API CONECCTION")
+            }
+        )
+        requestQueue.add(jsonObjectRequest)
     }
 
     private fun showAlert(msg: String) {

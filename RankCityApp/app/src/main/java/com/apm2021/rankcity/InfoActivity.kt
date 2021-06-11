@@ -1,6 +1,8 @@
 package com.apm2021.rankcity
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
@@ -11,6 +13,7 @@ import com.android.volley.toolbox.Volley
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import org.json.JSONArray
 import org.json.JSONObject
 
 
@@ -22,28 +25,24 @@ class InfoActivity : AppCompatActivity() {
 
         var bundle = intent.extras
         val routeName = bundle?.getString("routeName")
-        val punctuation = bundle?.getString("punctuation")
+//        val punctuation = bundle?.getString("punctuation")
+        val punctuation = bundle?.getInt("punctuation")
         val time = bundle?.getString("time")
+        val currentDate = bundle?.getString("currentDate")
         //val byteArray = bundle?.getByteArray("byteArray")
         //val screenshot = intent.getParcelableExtra<Parcelable>("screenshot") as Bitmap?
-
-        val date = "10-10-2010"
-        val street = JSONObject()
-        street.put("name", "hola")
-        street.put("score", 10)
-        val street2 = JSONObject()
-        street2.put("name", "hola2")
-        street2.put("score", 20)
-        val streets = listOf<JSONObject>(street, street2)
-        val userId = "alejoncv"
-//        // API call
-//        CHange global scope
+        val sharedPreferences: SharedPreferences =
+            this.getSharedPreferences("user_data_file", Context.MODE_PRIVATE)
+        val userId = sharedPreferences.getString("userId","").toString()
+        val data = JSONObject("""{"name":"caxe", "score":25}""")
+        val data2 = JSONObject("""{"name":"caxe2", "score":35}""")
+        val streets= JSONArray(listOf(data, data2))
         GlobalScope.launch {
-            addRouteAPI(userId, routeName, date, 50, 100, streets)
+            addRouteAPI(userId, routeName, currentDate, time, punctuation, streets)
         }
 
         findViewById<TextView>(R.id.routeName).text = routeName
-        findViewById<TextView>(R.id.punctuation).text = punctuation
+        findViewById<TextView>(R.id.punctuation).text = punctuation.toString()
         findViewById<TextView>(R.id.time).text = time
         //findViewById<ImageView>(R.id.screenshot).setImageBitmap(byteArray?.toBitmap())
 
@@ -64,7 +63,7 @@ class InfoActivity : AppCompatActivity() {
         }
     }
 
-    private fun addRouteAPI(userId: String, title: String?, date: String, time: Int, score: Int, streets: List<JSONObject>) {
+    private fun addRouteAPI(userId: String, title: String?, date: String?, time: String?, score: Int?, streets: JSONArray) {
         // Instantiate the RequestQueue.
         val queue = Volley.newRequestQueue(this)
         val url = "http://192.168.1.58:5000/routes/user/"+userId
