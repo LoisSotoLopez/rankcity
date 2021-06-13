@@ -34,9 +34,6 @@ class InfoActivity : AppCompatActivity() {
         val sharedPreferences: SharedPreferences =
             this.getSharedPreferences("user_data_file", Context.MODE_PRIVATE)
         val userId = sharedPreferences.getString("userId","").toString()
-//        val data = JSONObject("""{"name":"caxe", "score":25}""")
-//        val data2 = JSONObject("""{"name":"caxe2", "score":35}""")
-//        val streets= JSONArray(listOf(data, data2))
         val streets =  JSONArray(getIntent().getStringExtra("addresses_score"));
         GlobalScope.launch {
             addRouteAPI(userId, routeName, currentDate, time, punctuation, streets)
@@ -67,7 +64,7 @@ class InfoActivity : AppCompatActivity() {
     private fun addRouteAPI(userId: String, title: String?, date: String?, time: String?, score: Int?, streets: JSONArray) {
         // Instantiate the RequestQueue.
         val queue = Volley.newRequestQueue(this)
-        val url = "http://192.168.1.58:5000/routes/user/"+userId
+        val url = "https://rankcity-app.herokuapp.com/routes/user/"+userId
 
         // TODO generar random ids
         val jsonObject = JSONObject()

@@ -120,7 +120,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 //    private fun addRouteAPI(userId: String, title: String, date: String, time: Int, score: Int, streets: List<String>) {
 //        // Instantiate the RequestQueue.
 //        val queue = Volley.newRequestQueue(this)
-//        val url = "http://192.168.1.58:5000/routes/user/"+userId
+//        val url = "http://192.168.1.74:5000/routes/user/"+userId
 //
 //        // TODO generar random ids
 //        val jsonObject = JSONObject()

@@ -4,7 +4,9 @@ import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -15,13 +17,25 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.android.volley.Request
+import com.android.volley.toolbox.JsonArrayRequest
+import com.android.volley.toolbox.Volley
 import com.apm2021.rankcity.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.gson.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import java.lang.reflect.Type
+import kotlin.concurrent.thread
 
 
 class ProfileFragment : Fragment() {
@@ -31,6 +45,27 @@ class ProfileFragment : Fragment() {
     var photo: Uri? = null
     lateinit var imgPhoto: ImageView
     lateinit var cameraButton: FloatingActionButton
+    var routes = ArrayList<Route>()
+    private var currentThread: Thread? = null
+    private val mutex = Mutex()
+    private var userid = String()
+
+    suspend fun preloadData() {
+        if (routes.isEmpty()) {
+            mutex.withLock {
+                if (currentThread == null || !currentThread!!.isAlive) {
+                    currentThread = thread(start = true) {
+                        val sharedPreferences: SharedPreferences? =
+                            this.activity?.getSharedPreferences("user_data_file", Context.MODE_PRIVATE)
+                        if (sharedPreferences != null) {
+                            userid = sharedPreferences.getString("userId","").toString()
+                        }
+                        getUserRoutesFrom_API(userid)
+                    }
+                }
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,7 +84,13 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(itemView: View, savedInstanceState: Bundle?) {
         super.onViewCreated(itemView, savedInstanceState)
 
-        val datesList = Datasource_Profile(this).getDatesList()
+        val textView = requireView().findViewById<View>(R.id.ProfileUsername) as TextView
+        textView.text = userid
+//        val datesList = Datasource_Profile(this).getDatesList()
+//        GlobalScope.launch {
+//            getUserRoutesFrom_API(userid)
+//        }
+        val datesList = routes
 
         val recyclerView = itemView.findViewById<RecyclerView>(R.id.recycler_view)
         //GlobalScope.launch {
@@ -58,9 +99,107 @@ class ProfileFragment : Fragment() {
             // RecyclerView behavior
             layoutManager = LinearLayoutManager(activity)
             // set the custom adapter to the RecyclerView
+            val datesList = arrayOf<String>("HOLA", "CHAO")
             adapter = ProfileAdapter(datesList)
         }
         //}
+    }
+
+    private fun getUserRoutesFrom_API(userid: String) = runBlocking {
+        val requestQueue = Volley.newRequestQueue(context)
+        val url = "http://192.168.1.74:5000/routes/user/$userid"
+        val jsonArrayRequest = JsonArrayRequest(
+            Request.Method.GET, url, null,
+            { response ->
+                println("RUTAS"+response)
+                try {
+                    val gsonBuilder = GsonBuilder()
+                    gsonBuilder.registerTypeAdapter(
+                        Route::class.java,
+                        RouteDeserializer()
+                    )
+                    routes.addAll(
+                        gsonBuilder.create().fromJson(
+                            response.toString(),
+                            Array<Route>::class.java
+                        ))
+                    println(routes)
+//                    for (i in 0 until response.length()) {
+//                        val route: JSONObject = response.getJSONObject(i)
+//                        routes.add(route)
+//                    }
+                } catch (e: Exception) {
+
+                }
+            },
+            { error ->
+                // TODO: Handle error
+                println("ERROR API CONECCTION")
+            }
+        )
+        requestQueue.add(jsonArrayRequest)
+    }
+
+    class RouteDeserializer : JsonDeserializer<Route> {
+        override fun deserialize(
+            json: JsonElement?,
+            typeOfT: Type?,
+            context: JsonDeserializationContext?
+        ): Route {
+            val route = json as JsonObject
+
+            var id: Int = -1
+            if (route.has("level")) {
+                id = route["id"].asInt
+            }
+
+            var title = ""
+            if (route.has("title")) {
+                title = route["title"].asString
+            }
+
+            var date = ""
+            if (route.has("date")) {
+                date = route["date"].asString
+            }
+
+            var user = ""
+            if (route.has("user")) {
+                user = route["user"].asString
+            }
+
+            var time = ""
+            if (route.has("time")) {
+                time = route["time"].asString
+            }
+
+            var score = 0
+            if (route.has("score")) {
+                score = route["score"].asInt
+            }
+
+            val streets_json = route["streets"].asJsonArray
+
+            val streets = ArrayList<Street>()
+            for (street in streets_json) {
+                streets.add(
+                    Street(
+                        street.asJsonObject["name"].asString,
+                        street.asJsonObject["score"].asInt
+                    )
+                )
+            }
+
+            return Route(
+                id,
+                title,
+                date,
+                time,
+                user,
+                score,
+                streets
+            )
+        }
     }
 
     //Al pulsar botón para abrir cámara comprobamos permisos
@@ -77,8 +216,8 @@ class ProfileFragment : Fragment() {
                         Manifest.permission.WRITE_EXTERNAL_STORAGE
                     )
                 } == PackageManager.PERMISSION_DENIED){
-                    val cameraPermits = arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    requestPermissions(cameraPermits, REQUEST_CAMERA)
+                val cameraPermits = arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                requestPermissions(cameraPermits, REQUEST_CAMERA)
             }else{
                 openCamera()
             }

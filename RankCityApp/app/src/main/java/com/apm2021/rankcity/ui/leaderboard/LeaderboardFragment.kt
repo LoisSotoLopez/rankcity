@@ -1,5 +1,7 @@
 package com.apm2021.rankcity.ui.leaderboard
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -26,7 +28,6 @@ class LeaderboardFragment : Fragment() {
 
         val usersList = Datasource_Leaderboard(this).getUsersList()
 
-
         val recyclerView = itemView.findViewById<RecyclerView>(R.id.recycler_view)
         //GlobalScope.launch {
             recyclerView.apply {
@@ -38,4 +39,5 @@ class LeaderboardFragment : Fragment() {
             }
         //}
     }
+
 }

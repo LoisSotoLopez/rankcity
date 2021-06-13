@@ -177,7 +177,7 @@ def get_routes_user(user_id):
             route['streets'] = list_streets
             list_streets = []
 
-        return {"rutas": results}
+        return jsonify(results)
 
     elif request.method == 'POST':
         if request.is_json:
@@ -328,7 +328,7 @@ def get_ranking():
                     )
             total_score = 0
 
-        return {"count": len(results), "users": results}
+        return jsonify(results)
 
 
 if __name__ == '__main__':
