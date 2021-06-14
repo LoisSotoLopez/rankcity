@@ -130,8 +130,8 @@ class LoginActivity : AppCompatActivity() {
     private fun addUserAPI(username: String, name: String, email: String, accept_eula: Boolean) {
         // Instantiate the RequestQueue.
         val queue = Volley.newRequestQueue(this)
-//        val url = "https://rankcity-app.herokuapp.com/users"
-        val url = "http://192.168.1.74:5000/users"
+        val url = "https://rankcity-app.herokuapp.com/users"
+//        val url = "http://192.168.1.74:5000/users"
 
         val jsonObject = JSONObject()
         jsonObject.put("username", username)
@@ -238,8 +238,8 @@ class LoginActivity : AppCompatActivity() {
     private fun getUserFrom_API(userid: String) {
         val requestQueue = Volley.newRequestQueue(this)
         val userid_aux = userid.split("@")[0]
-//        val url = "https://rankcity-app.herokuapp.com/users/$userid_aux"
-        val url = "http://192.168.1.74:5000/users/$userid_aux"
+        val url = "https://rankcity-app.herokuapp.com/users/$userid_aux"
+//        val url = "http://192.168.1.74:5000/users/$userid_aux"
         val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
             { response ->
 //                println("RESPONSEEEEEEEEEEEEEE"+response)

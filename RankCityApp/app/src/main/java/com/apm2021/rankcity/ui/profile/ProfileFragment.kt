@@ -112,7 +112,8 @@ class ProfileFragment : Fragment() {
 
     private fun getUserRoutesFrom_API(userid: String) = runBlocking {
         val requestQueue = Volley.newRequestQueue(context)
-        val url = "http://192.168.1.74:5000/routes/user/$userid"
+        val url = "https://rankcity-app.herokuapp.com/routes/user/$userid"
+//        val url = "http://192.168.1.74:5000/routes/user/$userid"
         val jsonArrayRequest = JsonArrayRequest(
             Request.Method.GET, url, null,
             { response ->
