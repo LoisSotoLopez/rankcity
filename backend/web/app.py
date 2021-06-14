@@ -31,7 +31,7 @@ class RouteModel(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String())
-    date = db.Column(db.DateTime())
+    date = db.Column(db.String())
     time = db.Column(db.String())
     user = db.Column(db.String(), db.ForeignKey('user.username'))
     score = db.Column(db.Float())
@@ -190,16 +190,14 @@ def get_routes_user(user_id):
                 street_name = street['name']
 
                 street_db = StreetModel.query.filter_by(name=street_name).first()
-                if street_db is not None:
-                    street_db = street_db[0]
-                else:
+                if street_db is None:
                     street_db = StreetModel(name=street_name)
                     db.session.add(street_db)
                     db.session.commit()
 
-                route_streets = RouteStreetModel(new_route.id, street_db.id, street['score'])
-                db.session.add(route_streets)
-                db.session.commit()
+            route_streets = RouteStreetModel(new_route.id, street_db.id, street['score'])
+            db.session.add(route_streets)
+            db.session.commit()
             
             return {"message": f"Route {new_route.__repr__()} has been created successfully."}
 
@@ -327,6 +325,8 @@ def get_ranking():
                     "score": total_score}
                     )
             total_score = 0
+
+        results = sorted(results, key=lambda x : x['score'], reverse=True)
 
         return jsonify(results)
 

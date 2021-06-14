@@ -422,7 +422,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     if (routeName != "") {
                         val intent = Intent(this, InfoActivity::class.java).apply {
                             putExtra("routeName", routeName)
-                            putExtra("punctuation", punctuation.toString())
+                            putExtra("punctuation", punctuation)
                             putExtra("time", chronometer.text)
                             putExtra("currentDate", currentDate)
                             putExtra("addresses_score", addresses_score.toString())

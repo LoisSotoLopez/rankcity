@@ -28,7 +28,6 @@ class MainActivity : AppCompatActivity() {
         //Saving auth data
         val bundle = intent.extras
         val email = bundle?.getString("email")
-
         val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
         prefs.putString("email", email)
         prefs.apply()
@@ -44,29 +43,6 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-    }
-
-    private fun getUserRoutesFrom_API(userid: String) {
-        val requestQueue = Volley.newRequestQueue(this)
-        val url = "http://192.168.1.58:5000/routes/user/$userid"
-        val jsonObjectRequest = JsonObjectRequest(
-            Request.Method.GET, url, null,
-            { response ->
-//                println("RUUUUUUUUUUUUUUUUUTAS"+response)
-                val sharedPreferences: SharedPreferences =
-                    this.getSharedPreferences("user_routes_file", MODE_PRIVATE)
-                val editor: SharedPreferences.Editor = sharedPreferences.edit()
-                editor.putString("userId", response.getString("username"))
-                editor.apply()
-                editor.commit()
-//                println(sharedPreferences.getString("userId", "holahola"))
-            },
-            { error ->
-                // TODO: Handle error
-                println("ERROR API CONECCTION")
-            }
-        )
-        requestQueue.add(jsonObjectRequest)
     }
 
     override fun onBackPressed() {

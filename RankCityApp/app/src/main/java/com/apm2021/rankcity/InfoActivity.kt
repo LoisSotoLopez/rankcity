@@ -29,6 +29,7 @@ class InfoActivity : AppCompatActivity() {
         val punctuation = bundle?.getInt("punctuation")
         val time = bundle?.getString("time")
         val currentDate = bundle?.getString("currentDate")
+//        val currentDate = "10-07-1994"
         //val byteArray = bundle?.getByteArray("byteArray")
         //val screenshot = intent.getParcelableExtra<Parcelable>("screenshot") as Bitmap?
         val sharedPreferences: SharedPreferences =
@@ -64,7 +65,8 @@ class InfoActivity : AppCompatActivity() {
     private fun addRouteAPI(userId: String, title: String?, date: String?, time: String?, score: Int?, streets: JSONArray) {
         // Instantiate the RequestQueue.
         val queue = Volley.newRequestQueue(this)
-        val url = "https://rankcity-app.herokuapp.com/routes/user/"+userId
+//        val url = "https://rankcity-app.herokuapp.com/routes/user/"+userId
+        val url = "http://192.168.1.74:5000/routes/user/"+userId
 
         // TODO generar random ids
         val jsonObject = JSONObject()

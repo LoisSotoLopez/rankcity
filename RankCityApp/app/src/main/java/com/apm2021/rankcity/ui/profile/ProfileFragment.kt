@@ -21,6 +21,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
@@ -29,13 +30,9 @@ import com.android.volley.toolbox.Volley
 import com.apm2021.rankcity.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import java.lang.reflect.Type
-import kotlin.concurrent.thread
 
 
 class ProfileFragment : Fragment() {
@@ -45,27 +42,28 @@ class ProfileFragment : Fragment() {
     var photo: Uri? = null
     lateinit var imgPhoto: ImageView
     lateinit var cameraButton: FloatingActionButton
-    var routes = ArrayList<Route>()
+//    private var routes = ArrayList<Route>()
+    private var mroutes = MutableLiveData<ArrayList<Route>>()
     private var currentThread: Thread? = null
     private val mutex = Mutex()
     private var userid = String()
 
-    suspend fun preloadData() {
-        if (routes.isEmpty()) {
-            mutex.withLock {
-                if (currentThread == null || !currentThread!!.isAlive) {
-                    currentThread = thread(start = true) {
-                        val sharedPreferences: SharedPreferences? =
-                            this.activity?.getSharedPreferences("user_data_file", Context.MODE_PRIVATE)
-                        if (sharedPreferences != null) {
-                            userid = sharedPreferences.getString("userId","").toString()
-                        }
-                        getUserRoutesFrom_API(userid)
-                    }
-                }
-            }
-        }
-    }
+//    suspend fun preloadData() {
+//        if (routes.isEmpty()) {
+//            mutex.withLock {
+//                if (currentThread == null || !currentThread!!.isAlive) {
+//                    currentThread = thread(start = true) {
+//                        val sharedPreferences: SharedPreferences? =
+//                            this.activity?.getSharedPreferences("user_data_file", Context.MODE_PRIVATE)
+//                        if (sharedPreferences != null) {
+//                            userid = sharedPreferences.getString("userId","").toString()
+//                        }
+//                        getUserRoutesFrom_API(userid)
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -78,6 +76,12 @@ class ProfileFragment : Fragment() {
         cameraButton.setOnClickListener {
             dialog()
         }
+        val sharedPreferences: SharedPreferences? =
+            this.activity?.getSharedPreferences("user_data_file", Context.MODE_PRIVATE)
+        if (sharedPreferences != null) {
+            userid = sharedPreferences.getString("userId","").toString()
+        }
+        getUserRoutesFrom_API(userid)
         return root
     }
 
@@ -90,18 +94,19 @@ class ProfileFragment : Fragment() {
 //        GlobalScope.launch {
 //            getUserRoutesFrom_API(userid)
 //        }
-        val datesList = routes
 
         val recyclerView = itemView.findViewById<RecyclerView>(R.id.recycler_view)
         //GlobalScope.launch {
-        recyclerView.apply {
-            // set a LinearLayoutManager to handle Android
-            // RecyclerView behavior
-            layoutManager = LinearLayoutManager(activity)
-            // set the custom adapter to the RecyclerView
-            val datesList = arrayOf<String>("HOLA", "CHAO")
-            adapter = ProfileAdapter(datesList)
-        }
+        mroutes.observe(viewLifecycleOwner,{
+//            Toast.makeText(context, it[0].toString(), Toast.LENGTH_SHORT).show()
+            recyclerView.apply {
+                // set a LinearLayoutManager to handle Android
+                // RecyclerView behavior
+                layoutManager = LinearLayoutManager(activity)
+                // set the custom adapter to the RecyclerView
+                adapter = ProfileAdapter(it)
+            }
+        })
         //}
     }
 
@@ -111,23 +116,21 @@ class ProfileFragment : Fragment() {
         val jsonArrayRequest = JsonArrayRequest(
             Request.Method.GET, url, null,
             { response ->
-                println("RUTAS"+response)
+//                println("RUTAS"+response)
                 try {
                     val gsonBuilder = GsonBuilder()
                     gsonBuilder.registerTypeAdapter(
                         Route::class.java,
                         RouteDeserializer()
                     )
+                    val routes = ArrayList<Route>()
                     routes.addAll(
                         gsonBuilder.create().fromJson(
                             response.toString(),
                             Array<Route>::class.java
                         ))
-                    println(routes)
-//                    for (i in 0 until response.length()) {
-//                        val route: JSONObject = response.getJSONObject(i)
-//                        routes.add(route)
-//                    }
+                    mroutes.postValue(routes)
+
                 } catch (e: Exception) {
 
                 }
@@ -149,7 +152,7 @@ class ProfileFragment : Fragment() {
             val route = json as JsonObject
 
             var id: Int = -1
-            if (route.has("level")) {
+            if (route.has("id")) {
                 id = route["id"].asInt
             }
 
