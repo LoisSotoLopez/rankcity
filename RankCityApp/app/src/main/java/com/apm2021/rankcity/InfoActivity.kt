@@ -10,14 +10,17 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.json.JSONArray
 import org.json.JSONObject
 
 
 class InfoActivity : AppCompatActivity() {
+
+    protected val scopeMap = CoroutineScope(
+        Dispatchers.Main
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         theme.applyStyle(R.style.primaryColors, true)
@@ -25,18 +28,17 @@ class InfoActivity : AppCompatActivity() {
 
         var bundle = intent.extras
         val routeName = bundle?.getString("routeName")
-//        val punctuation = bundle?.getString("punctuation")
         val punctuation = bundle?.getInt("punctuation")
         val time = bundle?.getString("time")
         val currentDate = bundle?.getString("currentDate")
-//        val currentDate = "10-07-1994"
         //val byteArray = bundle?.getByteArray("byteArray")
         //val screenshot = intent.getParcelableExtra<Parcelable>("screenshot") as Bitmap?
         val sharedPreferences: SharedPreferences =
             this.getSharedPreferences("user_data_file", Context.MODE_PRIVATE)
         val userId = sharedPreferences.getString("userId","").toString()
         val streets =  JSONArray(getIntent().getStringExtra("addresses_score"));
-        GlobalScope.launch {
+
+        scopeMap.launch {
             addRouteAPI(userId, routeName, currentDate, time, punctuation, streets)
         }
 
