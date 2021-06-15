@@ -75,6 +75,17 @@
             android:textColor="@color/button_text"
             app:backgroundTint="@color/button_primary" />
 
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginRight="24dp"
+            android:background="#FFDDD2" />
+
         <Button
             android:id="@+id/registerButton"
             android:layout_width="match_parent"
@@ -87,17 +98,6 @@
             android:text="@string/register_button_text"
             android:textColor="@color/button_text"
             app:backgroundTint="@color/button_primary" />
-
-        <View
-            android:id="@+id/divider"
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginLeft="24dp"
-            android:layout_marginTop="18dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginRight="24dp"
-            android:background="#FFDDD2" />
 
         <Button
             android:id="@+id/loginButtonGoogle"
