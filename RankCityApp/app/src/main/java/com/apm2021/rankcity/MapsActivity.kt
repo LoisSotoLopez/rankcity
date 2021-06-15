@@ -10,7 +10,6 @@ import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
-import android.os.Environment
 import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
@@ -20,25 +19,19 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.Volley
 import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.GoogleMap.SnapshotReadyCallback
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -49,7 +42,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     val REQUEST_PERMISSIONS_REQUEST_CODE = 1234
     var enable_ubication = false
     var punctuation = 0
-    private lateinit var chronometer: Chronometer
+    lateinit var chronometer: Chronometer
     var pauseOffSet: Long = 0
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
@@ -63,19 +56,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var bitmap: Bitmap
     private lateinit var byteArray: ByteArray
     private lateinit var currentDate: String
-
-/**var isFirstRun = true
-    lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-
-    companion object {
-        val isTracking = MutableLiveData<Boolean>()
-        val pathPoints = MutableLiveData<Polylines>()
-    }
-
-    private fun postInitialValues(){
-        isTracking.postValue(false)
-        pathPoints.postValue(mutableListOf())
-    }*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -113,6 +93,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             //snapShot()
             byteArray = bitmap.toByteArray()
             titleRouteDialog()
+            stopService()
             // La llamada a la API tiene más sentido en la info activity después de poner el nombre
             // de la ruta, así tenemos toda la info
         }
@@ -126,6 +107,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         } else {
             startLocationTracking(isTracking)
             startChronometer()
+            startService()
+//            GlobalScope.launch {
+//            }
             //update()
             /**getLocation()*/
         }
@@ -136,50 +120,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val stopButton = findViewById<Button>(R.id.stopRouteButton) as Button
         stopButton.visibility = View.VISIBLE
     }
-
-
-    /**fun getLocation() {
-        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        val gpsStatus = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        val latLngs = listOf<LatLng>()
-
-        if (gpsStatus) {
-            val fusedLocation = LocationServices.getFusedLocationProviderClient(applicationContext)
-            try {
-                val locationResult = fusedLocation.lastLocation
-                locationResult.addOnCompleteListener(this, OnCompleteListener<Location> {
-                    if (it.isSuccessful) {
-                        if (it.result == null) {
-                            getLocation()
-                        } else if (mMap == null) {
-                            enable_ubication = true
-                        } else {
-                            val location = LatLng(
-                                it.result!!.latitude,
-                                it.result!!.longitude
-                            )
-
-                            latLngs.toMutableList().add(location)
-
-                            getCompleteAddressString(location.latitude, location.longitude)
-                            mMap.isMyLocationEnabled = true
-                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 17f))
-                            printPolyline(latLngs)
-                        }
-                    }
-                })
-            } catch (e: SecurityException) {
-                Log.e("Exception: %s", e.message!!)
-            }
-        } else {
-            Snackbar.make(
-                findViewById(R.id.maps_layout), "Activa tu ubicación!",
-                Snackbar.LENGTH_INDEFINITE
-            ).setAction(
-                "La he activado",
-                View.OnClickListener { getLocation() }).show()
-        }
-    }*/
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -478,25 +418,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    /**fun snapShot() {
-        val callback: SnapshotReadyCallback =
-            SnapshotReadyCallback { snapshot ->
-                if (snapshot != null) {
-                    bitmap = snapshot
-                }
+    fun startService() {
+        val serviceIntent = Intent(this, RouteService::class.java)
+        serviceIntent.putExtra("inputExtra", "Route Service")
+        serviceIntent.putExtra("chronometer", chronometer.text)
+        ContextCompat.startForegroundService(this, serviceIntent)
+    }
 
-                try {
-                    val file = File(
-                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                        "map.png"
-                    )
-                    val fout = FileOutputStream(file)
-                    //bitmap!!.compress(Bitmap.CompressFormat.PNG, 90, fout)
-                } catch (e: java.lang.Exception) {
-                    e.printStackTrace()
-                }
-            }
-        mMap.snapshot(callback)
-    }*/
+    fun stopService() {
+        val serviceIntent = Intent(this, RouteService::class.java)
+        stopService(serviceIntent)
+    }
+
 
 }
