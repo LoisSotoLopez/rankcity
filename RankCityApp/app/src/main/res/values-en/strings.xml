@@ -23,7 +23,7 @@
     <string name="main_menu">Main Menu</string>
     <string name="title_activity_maps">Map</string>
     <string name="pause_button">pause button</string>
-    <string name="user_score">score</string>
+    <string name="card_user_score">Score</string>
     <string name="periodoButton">Time filter</string>
     <string name="timeMapFragment">Time</string>
     <string name="scoreMapFragment">Score</string>
@@ -36,6 +36,8 @@
     <string name="stopButtonName">End route</string>
     <string name="acceptEULA">Accept</string>
     <string name="cancelEULA">Cancel</string>
+    <string name="card_user_nameroute">Route</string>
+    <string name="card_user_date">Date</string>
 
 
     <string-array name="users_array">

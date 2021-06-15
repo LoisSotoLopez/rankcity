@@ -65,10 +65,12 @@
     <string name="user_avatar_description_text">El avatar del usuario</string>
     <string name="user_email_input_placeholder">Email</string>
     <string name="user_name_input_placeholder">Nombre de usuario</string>
-    <string name="user_score">Puntuación</string>
+    <string name="card_user_score">Puntuación</string>
     <string name="welcomeText">¡Bienvenido!</string>
     <string name="welcome_image">Imagen de bienvenida</string>
     <string name="stopButtonName">Finalizar ruta</string>
     <string name="acceptEULA">Aceptar</string>
     <string name="cancelEULA">Cancelar</string>
+    <string name="card_user_nameroute">Ruta</string>
+    <string name="card_user_date">Fecha</string>
 </resources>
