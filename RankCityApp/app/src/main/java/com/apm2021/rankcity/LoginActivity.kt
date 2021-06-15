@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -18,10 +17,8 @@ import com.google.firebase.auth.*
 import kotlinx.coroutines.*
 import org.json.JSONException
 import org.json.JSONObject
-import java.io.DataOutputStream
-import java.net.HttpURLConnection
 import java.net.URL
-import java.nio.charset.Charset
+
 
 
 class LoginActivity : AppCompatActivity() {
@@ -34,11 +31,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         setup()
-        resetPreferences()
         checkEula()
-    }
-
-    private fun onActivityResult() {
         session()
     }
 
@@ -46,80 +39,24 @@ class LoginActivity : AppCompatActivity() {
 
         val nameInputText = findViewById<TextInputEditText>(R.id.UserEmailInputText)
         val passInputText = findViewById<TextInputEditText>(R.id.PasswordInputText)
-        // Pulsar boton login nos lleva al inicio de la app
         val loginButton = findViewById<Button>(R.id.loginButton)
 
-        // set on-click listener
         loginButton.setOnClickListener {
             if (nameInputText.text?.isNotEmpty() == true && passInputText.text?.isNotEmpty() == true) {
                 loginCoroutine(nameInputText.text.toString(), passInputText.text.toString())
             } else {
-                Toast.makeText(this, "Missing User/Password", Toast.LENGTH_SHORT).show()
+                showAlert("Missing User/Password")
             }
         }
 
         val registerButton = findViewById<Button>(R.id.registerButton)
-        // set on-click listener
         registerButton.setOnClickListener {
-            if (nameInputText.text?.isNotEmpty() == true && passInputText.text?.isNotEmpty() == true) {
-                signInCoroutine(nameInputText.text.toString(),passInputText.text.toString())
-            } else {
-                Toast.makeText(this, "User/Password missing", Toast.LENGTH_SHORT).show()
-            }
+            showRegister()
         }
-
 
         val loginButtonGoogle = findViewById<Button>(R.id.loginButtonGoogle)
-
-        // set on-click listener
         loginButtonGoogle.setOnClickListener {
             googleLoginCoroutine(this)
-        }
-    }
-
-
-    private fun signInCoroutine(name: String, pass: String)=runBlocking{
-        signIn(name, pass)
-    }
-
-    suspend fun signIn(name: String, pass: String)=coroutineScope {
-        try {
-            launch {
-                FirebaseAuth.getInstance().createUserWithEmailAndPassword(
-                    name,
-                    pass).addOnCompleteListener {
-                    //if (it.isSuccessful && postUser(name)) {
-                    // TODO: Add user entry on backend
-                    if (it.isSuccessful) {
-                        showEditProfile(it.result?.user?.email ?: "")
-                    } else {
-                        val errorCode = (it.getException() as FirebaseAuthException).errorCode
-                        when (errorCode) {
-                            "ERROR_INVALID_EMAIL" -> {
-                                showAlert("Ese correo no tiene buena pinta.\n" +
-                                        "Escribe algo como esot@lootro.com")
-                            }
-                            "ERROR_EMAIL_ALREADY_IN_USE" -> {
-                                showAlert("Ese correo ya ha sido usado para crear otra cuenta.")
-                            }
-                            "ERROR_WEAK_PASSWORD" -> {
-                                showAlert("Esa contraseña es demasiado débil.")
-                            }
-                            else ->
-                                showAlert("Algo no fue bien")
-                        }
-
-                    }
-                }
-            }
-        } catch (e: FirebaseAuthWeakPasswordException) {
-            showAlert("Esa contraseña es muy débil.")
-        } catch (e: FirebaseAuthInvalidCredentialsException) {
-            showAlert("Eso que has puesto no parece un correo. Pon algo tipo esto@lo-otro.com")
-        } catch (e: FirebaseAuthUserCollisionException) {
-            showAlert("Ese correo ya tiene una cuenta asociada")
-        } catch (e: java.lang.Exception) {
-            showAlert("No se pudo registrar")
         }
     }
 
@@ -152,10 +89,43 @@ class LoginActivity : AppCompatActivity() {
             ).addOnCompleteListener {
                 if (it.isSuccessful) {
                     //val triple = getUser(name); // TODO Retrieve required info here
+                    val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
+                    prefs.putString("email", it.result?.user?.email)
+                    prefs.apply()
                     showMain(it.result?.user?.email ?: "")
                 } else {
                     showAlert("Contraseña incorrecta")
                 }
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if(requestCode == GOOGLE_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+
+            try {
+                val account = task.getResult(ApiException::class.java)
+
+                if (account != null) {
+                    val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+
+                    FirebaseAuth.getInstance().signInWithCredential(credential)
+                        .addOnCompleteListener {
+                            if (it.isSuccessful) {
+                                val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
+                                prefs.putString("email", it.result?.user?.email)
+                                prefs.apply()
+                                showMain(account.email ?: "")
+                            } else {
+                                showAlert( "Falló la comunicación con Firebase")
+                            }
+                        }
+                }
+            } catch(e: ApiException) {
+                showAlert("Something Wrong")
             }
         }
     }
@@ -177,33 +147,6 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if(requestCode == GOOGLE_SIGN_IN) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-
-            try {
-                val account = task.getResult(ApiException::class.java)
-
-                if (account != null) {
-                    val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-
-                    FirebaseAuth.getInstance().signInWithCredential(credential)
-                        .addOnCompleteListener {
-                            if (it.isSuccessful) {
-                                showMain(account.email ?: "")
-                            } else {
-                                showAlert( "Falló la comunicación con Firebase")
-                            }
-                        }
-                }
-            } catch(e: ApiException) {
-
-            }
-        }
-    }
-
     private fun getUser(userid: String): Triple<Any, Any, Any> {
         val result = URL("http://localhost:5000/users/" + userid).readText()
         val jsonObject = JSONObject(result)
@@ -214,54 +157,8 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun postUser(userid: String) : Boolean{
-        val conn = URL("http://localhost:5000/users/" + userid).openConnection() as HttpURLConnection
-        conn.requestMethod = "POST"
-        conn.connectTimeout = 300000
-        conn.doOutput = true
-
-        val message = " {\n" +
-                "                \"username\": " + userid +",\n" +
-                "                \"name\": " + userid +",\n" +
-                "                \"email\": " + userid +"\n" +
-                "            }"
-        val postData: ByteArray =
-                message.toByteArray(Charset.forName("UTF-8"))
-
-        conn.setRequestProperty("charset", "utf-8")
-        conn.setRequestProperty("Content-length", postData.size.toString())
-        conn.setRequestProperty("Content-Type", "application/json")
-
-        try {
-            val outputStream: DataOutputStream = DataOutputStream(conn.outputStream)
-            outputStream.write(postData)
-            outputStream.flush()
-        } catch (exception: Exception) {
-
-        }
-
-        return (conn.responseCode == HttpURLConnection.HTTP_OK)
-    }
-
-    private fun showAlert(msg: String) {
-        //TODO check if AlertDialog is of proper type
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Error")
-        builder.setMessage(msg)
-        builder.setPositiveButton("Aceptar", null)
-        val dialog: AlertDialog = builder.create()
-        dialog.show()
-    }
-
-    private fun showMain(email: String) {
-        val mainIntent = Intent(this, MainActivity::class.java).apply {
-            putExtra("email", email)
-        }
-        startActivity(mainIntent)
-    }
-
     private fun showEditProfile(email: String) {
-        val profileEditorIntent = Intent(this, ProfileEditorActivity::class.java).apply {
+        val profileEditorIntent = Intent(this, RegisterActivity::class.java).apply {
             putExtra("email", email)
             putExtra("mandatory", true)
         }
@@ -288,6 +185,27 @@ class LoginActivity : AppCompatActivity() {
         builder.show()
     }
 
+    private fun showMain(email: String) {
+        val mainIntent = Intent(this, MainActivity::class.java).apply {
+            putExtra("email", email)
+        }
+        startActivity(mainIntent)
+    }
+
+    private fun showRegister() {
+        val intent = Intent(this, RegisterActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun showAlert(msg: String) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Error")
+        builder.setMessage(msg)
+        builder.setPositiveButton("Aceptar", null)
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
+
     private fun checkEula() {
         val preferences = applicationContext
             .getSharedPreferences("com.apm2021.rankcity", Context.MODE_PRIVATE)
@@ -300,12 +218,5 @@ class LoginActivity : AppCompatActivity() {
             intent.putExtras(bundle)
             startActivityForResult(intent, 1)
         }
-    }
-
-    // TODO : this function has testing purposes. Delete before prod.
-    private fun resetPreferences() {
-        var preferences = applicationContext
-            .getSharedPreferences("com.apm2021.rankcity", Context.MODE_PRIVATE)
-        preferences.edit().remove("email").apply()
     }
 }

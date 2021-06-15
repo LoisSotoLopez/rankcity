@@ -35,7 +35,7 @@ class HomeFragment : Fragment() {
         // Boton a empezar
         val startRouteButton = root.findViewById(R.id.period_change) as Button
         startRouteButton.setOnClickListener {
-            switchActivities()
+            //switchActivities()
             checkLocationPermission()
         }
         return root

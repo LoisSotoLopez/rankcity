@@ -25,9 +25,6 @@ class MainActivity : AppCompatActivity() {
         val bundle = intent.extras
         val email = bundle?.getString("email")
 
-        val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
-        prefs.putString("email", email)
-        prefs.apply()
         //TODO: clear prefs entries for email and provider once app properly closes
 
         // Llamada a la barra de navegacion
@@ -44,6 +41,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         //super.onBackPressed()
+        var preferences = applicationContext
+            .getSharedPreferences("com.apm2021.rankcity", Context.MODE_PRIVATE)
+        preferences.edit().remove("email").apply()
         exitDialog()
 
     }
@@ -63,6 +63,9 @@ class MainActivity : AppCompatActivity() {
 
         builder.setNeutralButton("Cerrar sesión"){ dialog, i ->
             val intent = Intent(this, LoginActivity::class.java)
+            val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
+            prefs.putString("email", null)
+            prefs.apply()
             startActivity(intent)
         }
         builder.show()

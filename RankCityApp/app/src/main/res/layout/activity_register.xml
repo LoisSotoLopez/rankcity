@@ -7,6 +7,21 @@
     android:background="@color/main_background"
     tools:context=".MainActivity">
 
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/UserEmailInputText"
+        android:layout_width="367dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="28dp"
+        android:layout_weight="1"
+        android:background="@color/input_background"
+        android:hint="@string/user_email_input_placeholder"
+        android:inputType="text"
+        android:maxLength="320"
+        android:paddingLeft="20dp"
+        android:textColor="@color/input_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editProfileTitle" />
 
     <TextView
         android:id="@+id/editProfileTitle"
@@ -25,13 +40,30 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/PasswordInputText"
+        android:layout_width="367dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="40dp"
+        android:layout_weight="1"
+        android:background="@color/input_background"
+        android:hint="@string/password_input_placeholder"
+        android:inputType="textPassword"
+        android:maxLength="16"
+        android:paddingLeft="20dp"
+        android:textColor="@color/input_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/UserEmailInputText"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/hometownInputText"
         android:layout_width="367dp"
         android:layout_height="50dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="40dp"
         android:layout_weight="1"
         android:background="@color/input_background"
-        android:hint="@string/edit_hometown_input_placeholder"
+        android:hint="@string/hometown_input_placeholder"
         android:inputType="text"
         android:maxLength="16"
         android:paddingLeft="20dp"
@@ -44,22 +76,22 @@
         android:id="@+id/editNickInputText"
         android:layout_width="364dp"
         android:layout_height="50dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="44dp"
         android:background="@color/input_background"
         android:hint="@string/edit_nick_input_placeholder"
         android:maxLength="16"
         android:paddingLeft="20dp"
         android:textColor="@color/input_text"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.468"
+        app:layout_constraintHorizontal_bias="0.489"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editProfileTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/PasswordInputText" />
 
     <Button
-        android:id="@+id/acceptProfileEditionButton"
+        android:id="@+id/acceptRegisterButton"
         android:layout_width="354dp"
         android:layout_height="54dp"
-        android:layout_marginTop="312dp"
+        android:layout_marginTop="88dp"
         android:text="@string/accept_profile_editon_button_text"
         android:textColor="@color/button_text"
         app:backgroundTint="@color/button_primary"
@@ -69,7 +101,7 @@
         app:layout_constraintTop_toBottomOf="@+id/hometownInputText" />
 
     <Button
-        android:id="@+id/cancelProfileEditionButton"
+        android:id="@+id/cancelRegisterButton"
         android:layout_width="354dp"
         android:layout_height="54dp"
         android:text="@string/cancel_profile_editon_button_text"
@@ -79,7 +111,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/acceptProfileEditionButton"
+        app:layout_constraintTop_toBottomOf="@+id/acceptRegisterButton"
         app:layout_constraintVertical_bias="0.362" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
