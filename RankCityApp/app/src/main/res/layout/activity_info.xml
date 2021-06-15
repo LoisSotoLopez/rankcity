@@ -9,6 +9,12 @@
     android:orientation="vertical"
     tools:context=".InfoActivity">
 
+    <ImageView
+        android:id="@+id/screenshot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:srcCompat="@tools:sample/avatars" />
+
     <TextView
         android:id="@+id/routeName"
         android:layout_width="match_parent"

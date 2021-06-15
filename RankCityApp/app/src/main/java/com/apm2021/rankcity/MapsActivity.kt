@@ -76,7 +76,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         theme.applyStyle(R.style.primaryColors, true)
         setContentView(R.layout.activity_maps)
 
-        main = findViewById(R.id.maps_layout)
+        main = findViewById(R.id.tableLayout)
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -102,9 +102,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         stopButton.setOnClickListener {
             fusedLocationProviderClient.removeLocationUpdates(locationCallback)
             stopChronometer()
-            //bitmap = screenshot(main)
+            stopButton.visibility = View.GONE
+            bitmap = screenshot(main)
             //snapShot()
-            //byteArray = bitmap.toByteArray()
+            byteArray = bitmap.toByteArray()
             titleRouteDialog()
             GlobalScope.launch {
                 println("Llamada API, POST para añadir nueva ruta")
@@ -136,6 +137,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             /**getLocation()*/
         }
     }
+
+    override fun onRestart() {
+        super.onRestart()
+        val stopButton = findViewById<Button>(R.id.stopRouteButton) as FloatingActionButton
+        stopButton.visibility = View.VISIBLE
+    }
+
 
     /**fun getLocation() {
         val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -400,7 +408,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                             putExtra("routeName", routeName)
                             putExtra("punctuation", punctuation.toString())
                             putExtra("time", chronometer.text)
-                            //putExtra("byteArray", byteArray)
+                            putExtra("byteArray", byteArray)
                         }
 
                         startActivity(intent)
@@ -413,6 +421,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 builder.setNegativeButton("Cancel") {
                         dialog, which -> dialog.cancel()
+                        val stopButton = findViewById<Button>(R.id.stopRouteButton) as FloatingActionButton
+                        stopButton.visibility = View.VISIBLE
                         startChronometer()
                         startLocationTracking(isTracking)
                 }
@@ -426,7 +436,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
         stopChronometer()
         exitDialog()
-
     }
 
     private fun exitDialog(){
@@ -445,7 +454,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         builder.show()
     }
-/**
+
     private fun screenshot(view: View): Bitmap{
         view.isDrawingCacheEnabled = true
         view.buildDrawingCache(true)
@@ -461,7 +470,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    fun snapShot() {
+    /**fun snapShot() {
         val callback: SnapshotReadyCallback =
             SnapshotReadyCallback { snapshot ->
                 if (snapshot != null) {
