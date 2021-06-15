@@ -8,9 +8,7 @@ import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.graphics.Bitmap
 import android.location.Address
 import android.location.Geocoder
-import android.location.Location
 import android.os.Bundle
-import android.os.Environment
 import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
@@ -44,32 +42,20 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     val REQUEST_PERMISSIONS_REQUEST_CODE = 1234
     var enable_ubication = false
+    var firstLocation = true
     var punctuation = 0
     private lateinit var chronometer: Chronometer
     var pauseOffSet: Long = 0
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
-    private var currentLocation: Location? = null
     private lateinit var routeName: String
     var isTracking = true
     var addresses = mutableListOf<String>()
     private lateinit var main: View
     private lateinit var bitmap: Bitmap
     private lateinit var byteArray: ByteArray
+    private lateinit var file: File
 
-/**var isFirstRun = true
-    lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-
-    companion object {
-        val isTracking = MutableLiveData<Boolean>()
-        val pathPoints = MutableLiveData<Polylines>()
-    }
-
-    private fun postInitialValues(){
-        isTracking.postValue(false)
-        pathPoints.postValue(mutableListOf())
-    }*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,14 +73,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val currentDate = sdf.format(Date())
         Toast.makeText(this, currentDate, Toast.LENGTH_SHORT).show()
         chronometer = findViewById(R.id.chronometer)
-        //startChronometer()
         findViewById<TextView>(R.id.punctuationText).text = punctuation.toString()
         fusedLocationProviderClient = FusedLocationProviderClient(this)
-/**postInitialValues()
-        fusedLocationProviderClient = FusedLocationProviderClient(this)
-        isTracking.observe(this, Observer {
-            updateLocationTracking(it)
-        })*/
 
         // Pulsar boton stop nos lleva a InfoActivity
         val stopButton = findViewById<Button>(R.id.stopRouteButton) as FloatingActionButton
@@ -104,7 +84,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             stopChronometer()
             stopButton.visibility = View.GONE
             bitmap = screenshot(main)
-            //snapShot()
+            snapShot()
             byteArray = bitmap.toByteArray()
             titleRouteDialog()
             GlobalScope.launch {
@@ -133,8 +113,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         } else {
             startLocationTracking(isTracking)
             startChronometer()
-            //update()
-            /**getLocation()*/
         }
     }
 
@@ -144,49 +122,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         stopButton.visibility = View.VISIBLE
     }
 
-
-    /**fun getLocation() {
-        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        val gpsStatus = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        val latLngs = listOf<LatLng>()
-
-        if (gpsStatus) {
-            val fusedLocation = LocationServices.getFusedLocationProviderClient(applicationContext)
-            try {
-                val locationResult = fusedLocation.lastLocation
-                locationResult.addOnCompleteListener(this, OnCompleteListener<Location> {
-                    if (it.isSuccessful) {
-                        if (it.result == null) {
-                            getLocation()
-                        } else if (mMap == null) {
-                            enable_ubication = true
-                        } else {
-                            val location = LatLng(
-                                it.result!!.latitude,
-                                it.result!!.longitude
-                            )
-
-                            latLngs.toMutableList().add(location)
-
-                            getCompleteAddressString(location.latitude, location.longitude)
-                            mMap.isMyLocationEnabled = true
-                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 17f))
-                            printPolyline(latLngs)
-                        }
-                    }
-                })
-            } catch (e: SecurityException) {
-                Log.e("Exception: %s", e.message!!)
-            }
-        } else {
-            Snackbar.make(
-                findViewById(R.id.maps_layout), "Activa tu ubicación!",
-                Snackbar.LENGTH_INDEFINITE
-            ).setAction(
-                "La he activado",
-                View.OnClickListener { getLocation() }).show()
-        }
-    }*/
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -227,9 +162,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap = googleMap
         mMap.uiSettings.isZoomControlsEnabled = true
 
-//        Add in future iterations markers for favourites streets
-        val coruna = LatLng(43.371926604109944, -8.403665934971855)
-        mMap.addMarker(MarkerOptions().position(coruna).title("A Coruña").snippet("Playa de Orzán"))
 
         if (checkPermissions() && enable_ubication) {
             if (ActivityCompat.checkSelfPermission(
@@ -367,7 +299,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                         locations.longitude
                     )
                     mMap.isMyLocationEnabled = true
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 17f))
+
+                    if (firstLocation){
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 16f))
+                        firstLocation = false
+                    }
 
                     //Add new location to the list
                     latLngs.add(location)
@@ -399,7 +335,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         input.setHint("Enter Text")
         builder.setView(input)
 
-
                 // Set up the buttons
                 builder.setPositiveButton("OK") { dialog, i ->
                     // Here you get get input text from the Edittext
@@ -410,6 +345,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                             putExtra("punctuation", punctuation.toString())
                             putExtra("time", chronometer.text)
                             putExtra("byteArray", byteArray)
+                            putExtra("file", file)
                         }
 
                         startActivity(intent)
@@ -433,7 +369,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     override fun onBackPressed() {
-        //super.onBackPressed()
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
         stopChronometer()
         exitDialog()
@@ -472,25 +407,24 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    /**fun snapShot() {
-        val callback: SnapshotReadyCallback =
+    fun snapShot(){
+        val callback =
             SnapshotReadyCallback { snapshot ->
                 if (snapshot != null) {
                     bitmap = snapshot
                 }
 
                 try {
-                    val file = File(
-                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                        "map.png"
-                    )
+                    file = File(getExternalFilesDir(null)?.canonicalPath, "map.png")
                     val fout = FileOutputStream(file)
-                    //bitmap!!.compress(Bitmap.CompressFormat.PNG, 90, fout)
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 90, fout)
+                    fout.flush()
+                    fout.close()
                 } catch (e: java.lang.Exception) {
                     e.printStackTrace()
                 }
             }
         mMap.snapshot(callback)
-    }*/
+    }
 
 }
