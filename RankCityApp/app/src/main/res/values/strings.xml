@@ -1,10 +1,10 @@
 <resources>
 
-    <string name="accept_profile_editon_button_text" translatable="false">LISTO !</string>
+    <string name="accept_profile_editon_button_text" translatable="false">LISTO</string>
     <string name="app_logo_description_text">application logo</string>
     <string name="app_name">RankCity</string>
     <string name="cancel_profile_editon_button_text" translatable="false">Cancelar</string>
-    <string name="congratulations">CONGRATULATIONS!</string>
+    <string name="congratulations">¡FELICIDADES!</string>
     <string name="dateItem">Fecha</string>
     <string-array name="dates_array">
         <item>01-01-2021</item>
@@ -23,29 +23,29 @@
     </string-array>
     <string name="edit_hometown_input_placeholder" translatable="false">Tu ciudad ...</string>
     <string name="edit_nick_input_placeholder" translatable="false">Tu seudónimo ...</string>
-    <string name="login_button_text">LOG IN</string>
-    <string name="main_menu">Main Menu</string>
-    <string name="password_input_placeholder">Password</string>
-    <string name="pause_button">pause button</string>
+    <string name="login_button_text">ENTRAR</string>
+    <string name="main_menu">Menú principal</string>
+    <string name="password_input_placeholder">Contraseña</string>
+    <string name="pause_button">Botón de pausa</string>
     <string name="periodo">Periodo</string>
     <string name="prefs_file">com.apm2021.rankcity.PREFERENCE_FILE_KEY</string>
     <string name="profileRoutesName">Rutas</string>
-    <string name="register_button_text">REGISTER</string>
-    <string name="score">SCORE</string>
+    <string name="register_button_text">REGISTRARSE</string>
+    <string name="score">PUNTUACIÓN</string>
     <string name="scoreMapFragment">Puntuación</string>
-    <string name="share_menu">Share Menu</string>
-    <string name="start_button_text">LETS WALK</string>
+    <string name="share_menu">Menu de compartir</string>
+    <string name="start_button_text">A CAMINAR</string>
     <string name="startButtonName">Empezar</string>
     <string name="time">TIME</string>
     <string name="timeMapFragment">Tiempo</string>
-    <string name="title_activity_maps">Map</string>
-    <string name="title_home">Home</string>
-    <string name="title_leaderboard">Leaderboard</string>
-    <string name="title_profile">Profile</string>
-    <string name="to_configuration_button">CONFIGURATION</string>
-    <string name="to_google_login_button_text">LOG IN WITH GOOGLE</string>
+    <string name="title_activity_maps">Mapa</string>
+    <string name="title_home">Bienvenido</string>
+    <string name="title_leaderboard">Ranking</string>
+    <string name="title_profile">Perfil</string>
+    <string name="to_configuration_button">CONFIGURACION</string>
+    <string name="to_google_login_button_text">ENTRAR CON GOOGLE</string>
     <string name="to_leaderboards_button">LEADERBOARDS</string>
-    <string name="to_profile_button">MY PROFILE</string>
+    <string name="to_profile_button">MI PERFIL</string>
     <string name="userNameItem">Usuario</string>
     <string-array name="users_array">
         <item>Lily</item>
@@ -62,9 +62,10 @@
         <item>Tulip</item>
         <item>Dandelion</item>
     </string-array>
-    <string name="user_avatar_description_text">user avatar</string>
+    <string name="user_avatar_description_text">El avatar del usuario</string>
     <string name="user_email_input_placeholder">Email</string>
-    <string name="user_name_input_placeholder">Username</string>
-    <string name="user_score">score</string>
+    <string name="user_name_input_placeholder">Nombre de usuario</string>
+    <string name="user_score">Puntuación</string>
     <string name="welcomeText">¡Bienvenido!</string>
+    <string name="welcome_image">Imagen de bienvenida</string>
 </resources>
