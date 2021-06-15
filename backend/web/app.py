@@ -13,7 +13,7 @@ class UserModel(db.Model):
 
     username = db.Column(db.String(), primary_key=True)
     email = db.Column(db.String())
-    name = db.Column(db.String())
+    town = db.Column(db.String())
     accept_eula = db.Column(db.Boolean())
     # image = db.Column(db.LargeBinary(length=2048))
     image = db.Column(db.String())
@@ -231,7 +231,7 @@ def handle_users():
             {
                 "username": user.username,
                 "email": user.email,
-                # "town": user.town,
+                "town": user.town,
                 "accept_eula": user.accept_eula,
                 "image": user.image
             } for user in users]
@@ -247,7 +247,7 @@ def handle_user(user_id):
         response = {
             "username": user.username,
             "email": user.email,
-            # "town": user.town,
+            "town": user.town,
             "accept_eula": user.accept_eula,
             "image": user.image
         }

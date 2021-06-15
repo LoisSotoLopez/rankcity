@@ -117,8 +117,8 @@ class RegisterActivity : AppCompatActivity() {
     private fun addUserAPI(username: String, email: String, town: String, accept_eula: Boolean) {
         // Instantiate the RequestQueue.
         val queue = Volley.newRequestQueue(this)
-//        val url = "https://rankcity-app.herokuapp.com/users"
-        val url = "http://192.168.1.74:5000/users"
+        val url = "https://rankcity-app.herokuapp.com/users"
+//        val url = "http://192.168.1.74:5000/users"
 
         val jsonObject = JSONObject()
         jsonObject.put("username", username)

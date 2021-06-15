@@ -123,8 +123,8 @@ class ProfileFragment : Fragment() {
 
     private fun getUserRoutesFrom_API(userid: String) = runBlocking {
         val requestQueue = Volley.newRequestQueue(context)
-//        val url = "https://rankcity-app.herokuapp.com/routes/user/$userid"
-        val url = "http://192.168.1.74:5000/routes/user/$userid"
+        val url = "https://rankcity-app.herokuapp.com/routes/user/$userid"
+//        val url = "http://192.168.1.74:5000/routes/user/$userid"
         val jsonArrayRequest = JsonArrayRequest(
             Request.Method.GET, url, null,
             { response ->
@@ -328,8 +328,8 @@ class ProfileFragment : Fragment() {
         val queue = Volley.newRequestQueue(context)
 //        val image_string = image.toString()
         val image_string = image?.let { String(it) }
-//        val url = "https://rankcity-app.herokuapp.com/users"
-        val url = "http://192.168.1.74:5000/users/"+userid
+        val url = "https://rankcity-app.herokuapp.com/users"+userid
+//        val url = "http://192.168.1.74:5000/users/"+userid
 
         val jsonObject = JSONObject()
 //        jsonObject.put("username", username)
