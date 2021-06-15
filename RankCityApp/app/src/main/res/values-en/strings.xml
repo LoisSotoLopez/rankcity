@@ -33,6 +33,7 @@
     <string name="userNameItem">Username</string>
     <string name="dateItem">Date</string>
     <string name="welcome_image">Welcome image</string>
+    <string name="stopButtonName">End route</string>
 
 
     <string-array name="users_array">
