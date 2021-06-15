@@ -1,22 +1,23 @@
 package com.apm2021.rankcity.ui.home
 
 import android.Manifest
+import android.animation.ValueAnimator
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.LinearInterpolator
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.apm2021.rankcity.MainActivity
 import com.apm2021.rankcity.MapsActivity
 import com.apm2021.rankcity.R
-import com.google.android.material.dialog.MaterialDialogs
 
 
 class HomeFragment : Fragment() {
@@ -31,6 +32,23 @@ class HomeFragment : Fragment() {
         homeViewModel =
             ViewModelProvider(this).get(HomeViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_home, container, false)
+
+        // Realizar loop de background
+        val backgroundOne: ImageView = root.findViewById(R.id.background_one) as ImageView
+        val backgroundTwo: ImageView = root.findViewById(R.id.background_two) as ImageView
+
+        val animator = ValueAnimator.ofFloat(0.0f, 1.0f)
+        animator.repeatCount = ValueAnimator.INFINITE
+        animator.interpolator = LinearInterpolator()
+        animator.duration = 60000L
+        animator.addUpdateListener { animation ->
+            val progress = animation.animatedValue as Float
+            val width: Int = backgroundOne.width
+            val translationX = width * progress
+            backgroundOne.translationX = translationX
+            backgroundTwo.translationX = translationX - width
+        }
+        animator.start()
 
         // Boton a empezar
         val startRouteButton = root.findViewById(R.id.period_change) as Button
