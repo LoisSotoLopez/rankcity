@@ -7,15 +7,17 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.apm2021.rankcity.R
 
-class ProfileAdapter(val routesList: Array<String>) :
+class ProfileAdapter(val routesList: ArrayList<Route>) :
         RecyclerView.Adapter<ProfileAdapter.ProfileViewHolder>() {
 
     // Describes an item view and its place within the RecyclerView
     class ProfileViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val flowerTextView: TextView = itemView.findViewById(R.id.card_user_date)
+        private val titleTextView: TextView = itemView.findViewById(R.id.card_user_date)
+        private val scoreTextView: TextView = itemView.findViewById(R.id.card_user_score)
 
-        fun bind(word: String) {
-            flowerTextView.text = word
+        fun bind(title: String, score: Int) {
+            titleTextView.text = title
+            scoreTextView.text = score.toString()
         }
     }
 
@@ -34,6 +36,6 @@ class ProfileAdapter(val routesList: Array<String>) :
 
     // Displays data at a certain position
     override fun onBindViewHolder(holder: ProfileViewHolder, position: Int) {
-        holder.bind(routesList[position])
+        holder.bind(routesList[position].title, routesList[position].score)
     }
 }

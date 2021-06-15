@@ -7,15 +7,17 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.apm2021.rankcity.R
 
-class LeaderboardAdapter(val routesList: Array<String>) :
+class LeaderboardAdapter(val rankingList: ArrayList<UserRanking>) :
         RecyclerView.Adapter<LeaderboardAdapter.LeaderboardViewHolder>() {
 
     // Describes an item view and its place within the RecyclerView
     class LeaderboardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val flowerTextView: TextView = itemView.findViewById(R.id.card_user_name)
+        private val usernameTextView: TextView = itemView.findViewById(R.id.card_user_name)
+        private val scoreTextView: TextView = itemView.findViewById(R.id.card_user_score)
 
-        fun bind(word: String) {
-            flowerTextView.text = word
+        fun bind(username: String, score: Int) {
+            usernameTextView.text = username
+            scoreTextView.text = score.toString()
         }
     }
 
@@ -29,11 +31,11 @@ class LeaderboardAdapter(val routesList: Array<String>) :
 
     // Returns size of data list
     override fun getItemCount(): Int {
-        return routesList.size
+        return rankingList.size
     }
 
     // Displays data at a certain position
     override fun onBindViewHolder(holder: LeaderboardViewHolder, position: Int) {
-        holder.bind(routesList[position])
+        holder.bind(rankingList[position].username, rankingList[position].score)
     }
 }
