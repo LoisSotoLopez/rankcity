@@ -390,6 +390,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun titleRouteDialog(){
         val builder = AlertDialog.Builder(this)
+        builder.setCancelable(false)
         builder.setTitle("Dale un título a la ruta")
 
         // Set up the input
@@ -440,6 +441,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun exitDialog(){
         val builder = AlertDialog.Builder(this)
+        builder.setCancelable(false)
         builder.setTitle("¿Estás seguro de que quieres salir de la ruta?")
 
         // Set up the buttons

@@ -55,6 +55,7 @@ class InfoActivity : AppCompatActivity() {
             val uri = bitmap?.let { it1 -> getUri(it1) }
             intent.putExtra(Intent.EXTRA_STREAM, uri)
             intent.putExtra(Intent.EXTRA_TEXT, "Información de $routeName")
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
             val chooseIntent = Intent.createChooser(intent, "Compartir")
             startActivity(chooseIntent)
             Toast.makeText(this, "Share route", Toast.LENGTH_SHORT).show()
@@ -69,7 +70,7 @@ class InfoActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        finish()
+        //finish()
     }
 
     fun ByteArray.toBitmap():Bitmap{
