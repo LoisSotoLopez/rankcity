@@ -3,12 +3,16 @@ package com.apm2021.rankcity
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.android.volley.Request
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -88,7 +92,7 @@ class LoginActivity : AppCompatActivity() {
                 pass
             ).addOnCompleteListener {
                 if (it.isSuccessful) {
-                    //val triple = getUser(name); // TODO Retrieve required info here
+                    getUserFrom_API(name)
                     val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
                     prefs.putString("email", it.result?.user?.email)
                     prefs.apply()
@@ -98,6 +102,33 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun getUserFrom_API(userid: String) {
+        val requestQueue = Volley.newRequestQueue(this)
+        val userid_aux = userid.split("@")[0]
+        val url = "https://rankcity-app.herokuapp.com/users/$userid_aux"
+//        val url = "http://192.168.1.74:5000/users/$userid_aux"
+        val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
+            { response ->
+//                println("RESPONSEEEEEEEEEEEEEE"+response)
+                val sharedPreferences: SharedPreferences = this.getSharedPreferences("user_data_file", Context.MODE_PRIVATE)
+                val editor: SharedPreferences.Editor = sharedPreferences.edit()
+                editor.putString("userId", response.getString("username"))
+                editor.putString("email", response.getString("email"))
+//                editor.putString("town", response.getString("town"))
+                editor.putBoolean("accept_eula", response.getBoolean("accept_eula"))
+                editor.putString("image", response.getString("image"))
+                editor.apply()
+                editor.commit()
+//                println(sharedPreferences.getString("userId", "holahola"))
+            },
+            { error ->
+                // TODO: Handle error
+                println("ERROR API CONECCTION")
+            }
+        )
+        requestQueue.add(jsonObjectRequest)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -144,16 +175,6 @@ class LoginActivity : AppCompatActivity() {
         if (email != null) {
             loginLayout.visibility = View.INVISIBLE
             showMain(email)
-        }
-    }
-
-    private fun getUser(userid: String): Triple<Any, Any, Any> {
-        val result = URL("http://localhost:5000/users/" + userid).readText()
-        val jsonObject = JSONObject(result)
-        try {
-            return Triple(jsonObject.get("username"), jsonObject.get("name"), jsonObject.get("email"))
-        } catch (e: JSONException) {
-            return Triple("null","null","null")
         }
     }
 

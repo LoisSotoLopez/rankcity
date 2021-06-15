@@ -20,6 +20,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -32,6 +34,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import org.json.JSONArray
+import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -54,9 +58,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var routeName: String
     var isTracking = true
     var addresses = mutableListOf<String>()
+    var addresses_score = JSONArray()
     private lateinit var main: View
     private lateinit var bitmap: Bitmap
     private lateinit var byteArray: ByteArray
+    private lateinit var currentDate: String
 
 /**var isFirstRun = true
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -84,7 +90,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
 
         val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm")
-        val currentDate = sdf.format(Date())
+        currentDate = sdf.format(Date())
         Toast.makeText(this, currentDate, Toast.LENGTH_SHORT).show()
         chronometer = findViewById(R.id.chronometer)
         //startChronometer()
@@ -107,21 +113,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             //snapShot()
             byteArray = bitmap.toByteArray()
             titleRouteDialog()
-            GlobalScope.launch {
-                println("Llamada API, POST para añadir nueva ruta")
-                /** EL POST DEBERÄ IR AL DARLE A OK EN EL DIALOGO DE TITULO DE RUTA
-                 * val conn = URL("http://localhost:5000/routes").openConnection() as HttpURLConnection
-                conn.requestMethod = "POST"
-                conn.connectTimeout = 300000
-                conn.doOutput = true
-                val message = " {\n" +
-                "                \"route\": " + routeid +",\n" +
-                "                \"title\": " + title +",\n" +
-                "                \"date\": " + date +"\n" +
-                "                \"user\": " + userid +",\n" +
-                "                \"score\": " + score +",\n" +
-                "            }"*/
-            }
+            // La llamada a la API tiene más sentido en la info activity después de poner el nombre
+            // de la ruta, así tenemos toda la info
         }
     }
 
@@ -320,6 +313,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         if (currentAddress !in addresses && currentAddress != null){
             punctuation += 100
             findViewById<TextView>(R.id.punctuationText).text = punctuation.toString()
+            val json = JSONObject()
+            json.put("name", currentAddress)
+            json.put("score", 100)
+            addresses_score.put(json)
+        }
+        else {
+            punctuation += 50
+            findViewById<TextView>(R.id.punctuationText).text = punctuation.toString()
+            val json = JSONObject()
+            json.put("name", currentAddress)
+            json.put("score", 50)
+            addresses_score.put(json)
         }
     }
 
@@ -373,6 +378,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     latLngs.add(location)
                     //Get the name of the street
                     currentAddress = getCompleteAddressString(location.latitude, location.longitude)
+
                     //Print the route
                     printPolyline(latLngs)
                     //Increase punctuation depending on the street
@@ -406,8 +412,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     if (routeName != "") {
                         val intent = Intent(this, InfoActivity::class.java).apply {
                             putExtra("routeName", routeName)
-                            putExtra("punctuation", punctuation.toString())
+                            putExtra("punctuation", punctuation)
                             putExtra("time", chronometer.text)
+                            putExtra("currentDate", currentDate)
+                            putExtra("addresses_score", addresses_score.toString())
                             putExtra("byteArray", byteArray)
                         }
 
