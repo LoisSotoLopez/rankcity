@@ -97,7 +97,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         })*/
 
         // Pulsar boton stop nos lleva a InfoActivity
-        val stopButton = findViewById<Button>(R.id.stopRouteButton) as FloatingActionButton
+        val stopButton = findViewById<Button>(R.id.stopRouteButton) as Button
         // set on-click listener
         stopButton.setOnClickListener {
             fusedLocationProviderClient.removeLocationUpdates(locationCallback)
@@ -140,7 +140,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onRestart() {
         super.onRestart()
-        val stopButton = findViewById<Button>(R.id.stopRouteButton) as FloatingActionButton
+        val stopButton = findViewById<Button>(R.id.stopRouteButton) as Button
         stopButton.visibility = View.VISIBLE
     }
 
@@ -421,7 +421,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 builder.setNegativeButton("Cancel") {
                         dialog, which -> dialog.cancel()
-                        val stopButton = findViewById<Button>(R.id.stopRouteButton) as FloatingActionButton
+                        val stopButton = findViewById<Button>(R.id.stopRouteButton) as Button
                         stopButton.visibility = View.VISIBLE
                         startChronometer()
                         startLocationTracking(isTracking)
