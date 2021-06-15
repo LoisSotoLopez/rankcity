@@ -1,6 +1,7 @@
 package com.apm2021.rankcity.ui.profile
 
 import android.Manifest
+import android.R.attr.data
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.ContentValues
@@ -8,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -26,12 +28,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonArrayRequest
+import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.apm2021.rankcity.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
+import org.json.JSONObject
+import java.io.IOException
 import java.lang.reflect.Type
 
 
@@ -47,6 +52,8 @@ class ProfileFragment : Fragment() {
     private var currentThread: Thread? = null
     private val mutex = Mutex()
     private var userid = String()
+//    private var imgProfile = String()
+    private var imageData: ByteArray? = null
 
 //    suspend fun preloadData() {
 //        if (routes.isEmpty()) {
@@ -80,6 +87,8 @@ class ProfileFragment : Fragment() {
             this.activity?.getSharedPreferences("user_data_file", Context.MODE_PRIVATE)
         if (sharedPreferences != null) {
             userid = sharedPreferences.getString("userId","").toString()
+            val shared_image = sharedPreferences.getString("image","").toString().toByteArray()
+            imageData = shared_image
         }
         getUserRoutesFrom_API(userid)
         return root
@@ -90,6 +99,8 @@ class ProfileFragment : Fragment() {
 
         val textView = requireView().findViewById<View>(R.id.ProfileUsername) as TextView
         textView.text = userid
+        val bitmap = imageData?.let { BitmapFactory.decodeByteArray(imageData, 0, it.size) }
+        imgPhoto.setImageBitmap(bitmap)
 //        val datesList = Datasource_Profile(this).getDatesList()
 //        GlobalScope.launch {
 //            getUserRoutesFrom_API(userid)
@@ -112,8 +123,8 @@ class ProfileFragment : Fragment() {
 
     private fun getUserRoutesFrom_API(userid: String) = runBlocking {
         val requestQueue = Volley.newRequestQueue(context)
-        val url = "https://rankcity-app.herokuapp.com/routes/user/$userid"
-//        val url = "http://192.168.1.74:5000/routes/user/$userid"
+//        val url = "https://rankcity-app.herokuapp.com/routes/user/$userid"
+        val url = "http://192.168.1.74:5000/routes/user/$userid"
         val jsonArrayRequest = JsonArrayRequest(
             Request.Method.GET, url, null,
             { response ->
@@ -294,10 +305,39 @@ class ProfileFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == Activity.RESULT_OK && requestCode == REQUEST_GALLERY){
             imgPhoto.setImageURI(data?.data)
+//            photo?.let { createImageData(it) }
+//            addUserImageFromAPI(userid, imageData)
         }
         if(resultCode == Activity.RESULT_OK && requestCode == REQUEST_CAMERA){
             imgPhoto.setImageURI(photo)
+            photo?.let { createImageData(it) }
+            addUserImageFromAPI(userid, imageData)
         }
+    }
+
+    @Throws(IOException::class)
+    private fun createImageData(uri: Uri) {
+        val inputStream = context?.contentResolver?.openInputStream(uri)
+        inputStream?.buffered()?.use {
+            imageData = it.readBytes()
+        }
+    }
+
+    private fun addUserImageFromAPI(username: String, image: ByteArray?) {
+        // Instantiate the RequestQueue.
+        val queue = Volley.newRequestQueue(context)
+//        val image_string = image.toString()
+        val image_string = image?.let { String(it) }
+//        val url = "https://rankcity-app.herokuapp.com/users"
+        val url = "http://192.168.1.74:5000/users/"+userid
+
+        val jsonObject = JSONObject()
+//        jsonObject.put("username", username)
+        jsonObject.put("image", image_string)
+
+        val jsonRequest = JsonObjectRequest(Request.Method.PUT, url, jsonObject, {}, {})
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest)
     }
 
     //Comprobar si se aceptan permisos

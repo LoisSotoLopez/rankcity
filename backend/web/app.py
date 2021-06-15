@@ -12,15 +12,18 @@ class UserModel(db.Model):
     __tablename__ = 'user'
 
     username = db.Column(db.String(), primary_key=True)
-    name = db.Column(db.String())
     email = db.Column(db.String())
+    name = db.Column(db.String())
     accept_eula = db.Column(db.Boolean())
+    # image = db.Column(db.LargeBinary(length=2048))
+    image = db.Column(db.String())
 
-    def __init__(self, username, name, email, accept_eula):
+    def __init__(self, username, email, town, accept_eula, image):
         self.username = username
-        self.name = name
         self.email = email
+        self.town = town
         self.accept_eula = accept_eula
+        self.image = image
 
     def __repr__(self):
         return f"<User {self.username}>"
@@ -208,14 +211,15 @@ def handle_users():
         if request.is_json:
             data = request.get_json()
             print(data)
-            new_user = UserModel(username=data['username'], name=data['name'], email=data['email'], accept_eula=data['accept_eula'])
+            new_user = UserModel(username=data['username'], email=data['email'], town=data['town'], accept_eula=data['accept_eula'], image="")
             db.session.add(new_user)
             db.session.commit()
             response = {
                 "username": new_user.username,
-                "name": new_user.name,
                 "email": new_user.email,
-                "accept_eula": new_user.accept_eula
+                "town": new_user.town,
+                "accept_eula": new_user.accept_eula,
+                "image": new_user.image
             }
             return response
         else:
@@ -226,9 +230,10 @@ def handle_users():
         results = [
             {
                 "username": user.username,
-                "name": user.name,
                 "email": user.email,
-                "accept_eula": user.accept_eula
+                # "town": user.town,
+                "accept_eula": user.accept_eula,
+                "image": user.image
             } for user in users]
 
         return {"count": len(results), "users": results}
@@ -241,18 +246,20 @@ def handle_user(user_id):
     if request.method == 'GET':
         response = {
             "username": user.username,
-            "name": user.name,
             "email": user.email,
-            "accept_eula": user.accept_eula
+            # "town": user.town,
+            "accept_eula": user.accept_eula,
+            "image": user.image
         }
         return response
 
     elif request.method == 'PUT':
         data = request.get_json()
-        user.username = data['username']
-        user.name = data['name']
-        user.email = data['email']
-        user.accept_eula = data['accept_eula']
+        # user.username = data['username']
+        # user.email = data['email']
+        # user.town = data['town']
+        # user.accept_eula = data['accept_eula']
+        user.image = data['image']
         db.session.add(user)
         db.session.commit()
         return {"message": f"User {user.username} successfully updated"}

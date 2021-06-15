@@ -59,8 +59,8 @@ class LeaderboardFragment : Fragment() {
 
     private fun getRankingFrom_API() = runBlocking {
         val requestQueue = Volley.newRequestQueue(context)
-//        val url = "http://192.168.1.74:5000/ranking"
-        val url = "https://rankcity-app.herokuapp.com/ranking"
+        val url = "http://192.168.1.74:5000/ranking"
+//        val url = "https://rankcity-app.herokuapp.com/ranking"
         val jsonArrayRequest = JsonArrayRequest(
             Request.Method.GET, url, null,
             { response ->

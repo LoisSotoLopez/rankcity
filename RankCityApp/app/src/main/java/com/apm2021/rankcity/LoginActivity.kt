@@ -12,8 +12,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Request
-import com.android.volley.Response
-import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -127,26 +125,29 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun addUserAPI(username: String, name: String, email: String, accept_eula: Boolean) {
+    private fun addUserAPI(username: String, email: String, town: String, accept_eula: Boolean) {
         // Instantiate the RequestQueue.
         val queue = Volley.newRequestQueue(this)
-        val url = "https://rankcity-app.herokuapp.com/users"
-//        val url = "http://192.168.1.74:5000/users"
+//        val url = "https://rankcity-app.herokuapp.com/users"
+        val url = "http://192.168.1.74:5000/users"
 
         val jsonObject = JSONObject()
         jsonObject.put("username", username)
-        jsonObject.put("name", name)
+//        jsonObject.put("name", name)
         jsonObject.put("email", email)
+        jsonObject.put("town", town)
         jsonObject.put("accept_eula", accept_eula)
+//        jsonObject.put("image", image)
 
         val jsonRequest = JsonObjectRequest(url, jsonObject, {
                 response ->
             val sharedPreferences: SharedPreferences = this.getSharedPreferences("user_data_file", Context.MODE_PRIVATE)
             val editor: SharedPreferences.Editor = sharedPreferences.edit()
             editor.putString("userId", response.getString("username"))
-            editor.putString("name", response.getString("name"))
             editor.putString("email", response.getString("email"))
+            editor.putString("town", response.getString("town"))
             editor.putBoolean("accept_eula", response.getBoolean("accept_eula"))
+//            editor.putBoolean("image", response.getBoolean("image"))
             editor.apply()
             editor.commit()
         }, {})
@@ -238,17 +239,18 @@ class LoginActivity : AppCompatActivity() {
     private fun getUserFrom_API(userid: String) {
         val requestQueue = Volley.newRequestQueue(this)
         val userid_aux = userid.split("@")[0]
-        val url = "https://rankcity-app.herokuapp.com/users/$userid_aux"
-//        val url = "http://192.168.1.74:5000/users/$userid_aux"
+//        val url = "https://rankcity-app.herokuapp.com/users/$userid_aux"
+        val url = "http://192.168.1.74:5000/users/$userid_aux"
         val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
             { response ->
 //                println("RESPONSEEEEEEEEEEEEEE"+response)
                 val sharedPreferences: SharedPreferences = this.getSharedPreferences("user_data_file", Context.MODE_PRIVATE)
                 val editor: SharedPreferences.Editor = sharedPreferences.edit()
                 editor.putString("userId", response.getString("username"))
-                editor.putString("name", response.getString("name"))
                 editor.putString("email", response.getString("email"))
+//                editor.putString("town", response.getString("town"))
                 editor.putBoolean("accept_eula", response.getBoolean("accept_eula"))
+                editor.putString("image", response.getString("image"))
                 editor.apply()
                 editor.commit()
 //                println(sharedPreferences.getString("userId", "holahola"))
