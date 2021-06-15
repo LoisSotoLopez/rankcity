@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -16,97 +16,119 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
-        android:id="@+id/routeName"
+        android:id="@+id/WellDone"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:gravity="center_horizontal"
+        android:text="@string/endRoute"
+        android:textSize="40sp"
+        android:textStyle="bold|italic"
+        app:layout_constraintTop_toBottomOf="@+id/screenshot" />
+
+    <TextView
+        android:id="@+id/routeName"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:text="@string/congratulations"
-        android:textSize="40sp" />
+        android:text="Nombre de ruta"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/WellDone" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingTop="@dimen/info_padding">
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_weight="1"
+        android:text="@string/scoreInfoFragment"
+        android:textSize="@dimen/info_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView20" />
 
-        <TextView
-            android:id="@+id/textView12"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/info_left_padding"
-            android:layout_marginLeft="@dimen/info_left_padding"
-            android:layout_weight="1"
-            android:text="@string/score"
-            android:textSize="@dimen/info_size" />
+    <TextView
+        android:id="@+id/punctuation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:fontFamily="@font/roboto"
+        android:text="1500"
+        android:textSize="@dimen/info_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintStart_toEndOf="@+id/textView12"
+        app:layout_constraintTop_toBottomOf="@+id/time" />
 
-        <TextView
-            android:id="@+id/punctuation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/info_right_padding"
-            android:layout_marginRight="@dimen/info_right_padding"
-            android:layout_weight="1"
-            android:fontFamily="@font/roboto"
-            android:text="1500"
-            android:textSize="@dimen/info_size" />
-    </LinearLayout>
+    <TextView
+        android:id="@+id/textView20"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:text="@string/timeInfoFragment"
+        android:textSize="@dimen/info_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/routeName" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:orientation="horizontal"
-        android:paddingTop="@dimen/betweeninfo_padding">
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:fontFamily="@font/roboto"
+        android:text="30:15"
+        android:textSize="@dimen/info_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView20"
+        app:layout_constraintTop_toBottomOf="@+id/routeName" />
 
-        <TextView
-            android:id="@+id/textView20"
-            android:layout_width="160dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/info_left_padding"
-            android:layout_marginLeft="@dimen/info_left_padding"
-            android:layout_weight="1"
-            android:text="@string/time"
-            android:textSize="@dimen/info_size" />
-
-        <TextView
-            android:id="@+id/time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/info_right_padding"
-            android:layout_marginRight="@dimen/info_right_padding"
-            android:layout_weight="1"
-            android:fontFamily="@font/roboto"
-            android:text="30:15"
-            android:textSize="@dimen/info_size" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="192dp"
-        android:orientation="horizontal"
-        android:paddingTop="@dimen/info_padding">
-
-        <Button
+    <Button
             android:id="@+id/buttonShare"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginEnd="3dp"
+            android:layout_marginRight="3dp"
+            android:layout_marginBottom="32dp"
             android:layout_weight="1"
             app:backgroundTint="@color/button_primary"
+            app:cornerRadius="1000dp"
             app:icon="@android:drawable/ic_menu_share"
-            app:iconGravity="top"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
             app:iconSize="60sp"
-            app:iconTint="@color/button_text" />
+            app:iconTint="@color/button_text"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/buttonBackHome"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Button
             android:id="@+id/buttonBackHome"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginBottom="32dp"
             android:layout_weight="1"
             app:backgroundTint="@color/button_primary"
+            app:cornerRadius="1000dp"
             app:icon="@drawable/ic_home"
-            app:iconGravity="top"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
             app:iconSize="60sp"
-            app:iconTint="@color/button_text" />
+            app:iconTint="@color/button_text"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/buttonShare" />
 
-    </LinearLayout>
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

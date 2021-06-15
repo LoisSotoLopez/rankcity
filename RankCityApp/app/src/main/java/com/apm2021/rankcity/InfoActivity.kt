@@ -12,10 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import java.io.ByteArrayOutputStream
-import java.io.File
 import java.io.OutputStream
-import java.net.URI
 
 
 class InfoActivity : AppCompatActivity() {

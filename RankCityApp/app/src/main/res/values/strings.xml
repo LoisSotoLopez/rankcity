@@ -4,7 +4,7 @@
     <string name="app_logo_description_text">application logo</string>
     <string name="app_name">RankCity</string>
     <string name="cancel_profile_editon_button_text" translatable="false">Cancelar</string>
-    <string name="congratulations">¡FELICIDADES!</string>
+    <string name="endRoute">¡BUEN TRABAJO!</string>
     <string name="dateItem">Fecha</string>
     <string-array name="dates_array">
         <item>01-01-2021</item>
@@ -27,16 +27,16 @@
     <string name="main_menu">Menú principal</string>
     <string name="password_input_placeholder">Contraseña</string>
     <string name="pause_button">Botón de pausa</string>
-    <string name="periodo">Periodo</string>
+    <string name="periodoButton">Periodo</string>
     <string name="prefs_file">com.apm2021.rankcity.PREFERENCE_FILE_KEY</string>
     <string name="profileRoutesName">Rutas</string>
     <string name="register_button_text">REGISTRARSE</string>
-    <string name="score">PUNTUACIÓN</string>
-    <string name="scoreMapFragment">Puntuación</string>
+    <string name="scoreInfoFragment">Puntuación</string>
+    <string name="scoreMapFragment">Puntos</string>
     <string name="share_menu">Menu de compartir</string>
     <string name="start_button_text">A CAMINAR</string>
     <string name="startButtonName">Empezar</string>
-    <string name="time">TIME</string>
+    <string name="timeInfoFragment">Tiempo</string>
     <string name="timeMapFragment">Tiempo</string>
     <string name="title_activity_maps">Mapa</string>
     <string name="title_home">Bienvenido</string>
@@ -69,4 +69,6 @@
     <string name="welcomeText">¡Bienvenido!</string>
     <string name="welcome_image">Imagen de bienvenida</string>
     <string name="stopButtonName">Finalizar ruta</string>
+    <string name="acceptEULA">Aceptar</string>
+    <string name="cancelEULA">Cancelar</string>
 </resources>

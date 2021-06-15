@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/button_primary"
-        android:text="@string/periodo"
+        android:text="@string/periodoButton"
         android:textColor="@color/button_text"
         app:backgroundTint="@color/button_primary"
         app:layout_constraintTop_toBottomOf="@+id/text_dashboard" />

@@ -16,15 +16,15 @@
     <string name="to_profile_button">MY PROFILE</string>
     <string name="to_leaderboards_button">LEADERBOARDS</string>
     <string name="to_configuration_button">CONFIGURATION</string>
-    <string name="congratulations">CONGRATULATIONS!</string>
-    <string name="score">SCORE</string>
-    <string name="time">TIME</string>
+    <string name="endRoute">NICE JOB!</string>
+    <string name="scoreInfoFragment">SCORE</string>
+    <string name="timeInfoFragment">TIME</string>
     <string name="share_menu">Share Menu</string>
     <string name="main_menu">Main Menu</string>
     <string name="title_activity_maps">Map</string>
     <string name="pause_button">pause button</string>
     <string name="user_score">score</string>
-    <string name="periodo">Periodo</string>
+    <string name="periodoButton">Time filter</string>
     <string name="timeMapFragment">Time</string>
     <string name="scoreMapFragment">Score</string>
     <string name="welcomeText">Welcome!</string>
@@ -34,6 +34,8 @@
     <string name="dateItem">Date</string>
     <string name="welcome_image">Welcome image</string>
     <string name="stopButtonName">End route</string>
+    <string name="acceptEULA">Accept</string>
+    <string name="cancelEULA">Cancel</string>
 
 
     <string-array name="users_array">
