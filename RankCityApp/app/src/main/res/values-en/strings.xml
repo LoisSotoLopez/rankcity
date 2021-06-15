@@ -28,7 +28,7 @@
     <string name="timeMapFragment">Time</string>
     <string name="scoreMapFragment">Score</string>
     <string name="welcomeText">Welcome!</string>
-    <string name="startButtonName">Start</string>
+    <string name="startButtonName">Start travel</string>
     <string name="profileRoutesName">Routes</string>
     <string name="userNameItem">Username</string>
     <string name="dateItem">Date</string>

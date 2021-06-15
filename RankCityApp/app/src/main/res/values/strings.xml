@@ -35,7 +35,7 @@
     <string name="scoreMapFragment">Puntos</string>
     <string name="share_menu">Menu de compartir</string>
     <string name="start_button_text">A CAMINAR</string>
-    <string name="startButtonName">Empezar</string>
+    <string name="startButtonName">Iniciar ruta</string>
     <string name="timeInfoFragment">Tiempo</string>
     <string name="timeMapFragment">Tiempo</string>
     <string name="title_activity_maps">Mapa</string>
