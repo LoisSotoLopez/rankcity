@@ -2,10 +2,13 @@ package com.apm2021.rankcity
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.textfield.TextInputEditText
@@ -13,6 +16,7 @@ import com.google.firebase.auth.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.json.JSONObject
 import java.io.DataOutputStream
 import java.lang.Exception
 import java.net.HttpURLConnection
@@ -74,6 +78,7 @@ class RegisterActivity : AppCompatActivity() {
                     pass).addOnCompleteListener {
                     //if (it.isSuccessful && postUser(name)) {
                     // TODO: Add user entry on backend
+                    addUserAPI(nick, email, hometown, true)
                     if (!it.isSuccessful) {
                         val errorCode = (it.getException() as FirebaseAuthException).errorCode
                         when (errorCode) {
@@ -107,6 +112,36 @@ class RegisterActivity : AppCompatActivity() {
         } catch (e: Exception) {
             showAlert("No se pudo registrar")
         }
+    }
+
+    private fun addUserAPI(username: String, email: String, town: String, accept_eula: Boolean) {
+        // Instantiate the RequestQueue.
+        val queue = Volley.newRequestQueue(this)
+//        val url = "https://rankcity-app.herokuapp.com/users"
+        val url = "http://192.168.1.74:5000/users"
+
+        val jsonObject = JSONObject()
+        jsonObject.put("username", username)
+//        jsonObject.put("name", name)
+        jsonObject.put("email", email)
+        jsonObject.put("town", town)
+        jsonObject.put("accept_eula", accept_eula)
+//        jsonObject.put("image", image)
+
+        val jsonRequest = JsonObjectRequest(url, jsonObject, {
+                response ->
+            val sharedPreferences: SharedPreferences = this.getSharedPreferences("user_data_file", MODE_PRIVATE)
+            val editor: SharedPreferences.Editor = sharedPreferences.edit()
+            editor.putString("userId", response.getString("username"))
+            editor.putString("email", response.getString("email"))
+            editor.putString("town", response.getString("town"))
+            editor.putBoolean("accept_eula", response.getBoolean("accept_eula"))
+//            editor.putBoolean("image", response.getBoolean("image"))
+            editor.apply()
+            editor.commit()
+        }, {})
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest)
     }
 
 

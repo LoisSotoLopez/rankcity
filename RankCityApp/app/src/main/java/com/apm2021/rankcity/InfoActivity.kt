@@ -102,19 +102,6 @@ class InfoActivity : AppCompatActivity() {
         queue.add(jsonRequest)
     }
 
-//    private fun addStreetAPI(currentAddress: String?) {
-//        // Instantiate the RequestQueue.
-//        val queue = Volley.newRequestQueue(this)
-//        val url = "http://192.168.1.58:5000/streets"
-//
-//        // TODO generar random ids
-//        val jsonObject = JSONObject()
-//        jsonObject.put("name", currentAddress)
-//
-//        val jsonRequest = JsonObjectRequest(url, jsonObject, {}, {})
-//        // Add the request to the RequestQueue.
-//        queue.add(jsonRequest)
-//    }
 
     override fun onBackPressed() {
         super.onBackPressed()
