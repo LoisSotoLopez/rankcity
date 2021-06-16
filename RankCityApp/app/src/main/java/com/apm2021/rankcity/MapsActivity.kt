@@ -73,16 +73,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         currentDate = sdf.format(Date())
         Toast.makeText(this, currentDate, Toast.LENGTH_SHORT).show()
         chronometer = findViewById(R.id.chronometer)
+
         //startChronometer()
         findViewById<TextView>(R.id.punctuationText).text = punctuation.toString()
         fusedLocationProviderClient = FusedLocationProviderClient(this)
-/**postInitialValues()
-        fusedLocationProviderClient = FusedLocationProviderClient(this)
-        isTracking.observe(this, Observer {
-            updateLocationTracking(it)
-        })*/
-
-        // Pulsar boton stop nos lleva a InfoActivity
         val stopButton = findViewById<Button>(R.id.stopRouteButton) as Button
         // set on-click listener
         stopButton.setOnClickListener {
@@ -94,9 +88,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             byteArray = bitmap.toByteArray()
             titleRouteDialog()
             stopService()
-            // La llamada a la API tiene más sentido en la info activity después de poner el nombre
-            // de la ruta, así tenemos toda la info
         }
+
+        startLocationTracking(isTracking)
+        startChronometer()
+        startService()
     }
 
     override fun onStart() {
@@ -104,14 +100,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         if (!checkPermissions()) {
             requestPermissions()
-        } else {
-            startLocationTracking(isTracking)
-            startChronometer()
-            startService()
-//            GlobalScope.launch {
-//            }
-            //update()
-            /**getLocation()*/
         }
     }
 
@@ -421,7 +409,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     fun startService() {
         val serviceIntent = Intent(this, RouteService::class.java)
         serviceIntent.putExtra("inputExtra", "Route Service")
-        serviceIntent.putExtra("chronometer", chronometer.text)
+        serviceIntent.putExtra("chronometer", chronometer.base)
         ContextCompat.startForegroundService(this, serviceIntent)
     }
 
