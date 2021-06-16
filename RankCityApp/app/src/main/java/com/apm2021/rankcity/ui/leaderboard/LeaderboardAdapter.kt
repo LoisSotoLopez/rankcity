@@ -1,5 +1,6 @@
 package com.apm2021.rankcity.ui.leaderboard
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,19 +13,33 @@ class LeaderboardAdapter(val rankingList: ArrayList<UserRanking>) :
 
     // Describes an item view and its place within the RecyclerView
     class LeaderboardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val usernameTextView: TextView = itemView.findViewById(R.id.card_user_name)
-        private val scoreTextView: TextView = itemView.findViewById(R.id.card_user_score)
+        private val rankTextView: TextView = itemView.findViewById(R.id.card_leaderboard_rank)
+        private val usernameTextView: TextView =
+            itemView.findViewById(R.id.card_leaderboard_username)
+        private val scoreTextView: TextView = itemView.findViewById(R.id.card_leaderboard_score)
 
-        fun bind(username: String, score: Int) {
+        fun bind(rank: Int, username: String, score: Int) {
+            rankTextView.text = rank.toString()
             usernameTextView.text = username
             scoreTextView.text = score.toString()
+            changeTextColorViaRank(rank,rankTextView)
         }
+
+        // Change text color
+        private fun changeTextColorViaRank(rank: Int, rankTextView: TextView) {
+            when (rank) {
+                1 -> rankTextView.setTextColor(Color.parseColor("#FF03DAC5"))
+                2,3 -> rankTextView.setTextColor(Color.parseColor("#FF018786"))
+            }
+
+        }
+
     }
 
     // Returns a new ViewHolder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LeaderboardViewHolder {
         val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_leaderboard, parent, false)
+            .inflate(R.layout.item_leaderboard, parent, false)
 
         return LeaderboardViewHolder(view)
     }
@@ -36,6 +51,7 @@ class LeaderboardAdapter(val rankingList: ArrayList<UserRanking>) :
 
     // Displays data at a certain position
     override fun onBindViewHolder(holder: LeaderboardViewHolder, position: Int) {
-        holder.bind(rankingList[position].username, rankingList[position].score)
+        holder.bind(position + 1, rankingList[position].username, rankingList[position].score)
     }
+
 }
