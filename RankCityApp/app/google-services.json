@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "686697245796-lbe735k0kav8om5a9j7jm4a3te0ck2pe.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.apm2021.rankcity",
+            "certificate_hash": "b99f33ad44d684e0df7b9331a2b4db3947d42cfc"
+          }
+        },
+        {
           "client_id": "686697245796-r851gnmfvkv74766861ce5ivivpfl7g7.apps.googleusercontent.com",
           "client_type": 3
         }
