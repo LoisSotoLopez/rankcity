@@ -65,4 +65,10 @@ class EulaActivity : AppCompatActivity() {
         setResult(RESULT_OK, intent)
         finish()
     }
+
+    // When back is pressed, app close
+    override fun onBackPressed() {
+        finish()
+        finishAffinity()
+    }
 }
