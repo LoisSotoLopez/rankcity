@@ -18,7 +18,7 @@ class ProfileAdapter(val routesList: ArrayList<Route>) :
 
         fun bind(title: String, date: String, score: Int) {
             titleTextView.text = title
-            dateTextView.text = date.split(" ")[0]
+            dateTextView.text = date.split(" ")[0] // Cogemos solo la parte del dia mes año
             scoreTextView.text = score.toString()
         }
     }
