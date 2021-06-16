@@ -78,7 +78,6 @@ class RegisterActivity : AppCompatActivity() {
                     pass).addOnCompleteListener {
                     //if (it.isSuccessful && postUser(name)) {
                     // TODO: Add user entry on backend
-                    addUserAPI(nick, email, hometown, true)
                     if (!it.isSuccessful) {
                         val errorCode = (it.getException() as FirebaseAuthException).errorCode
                         when (errorCode) {
@@ -96,6 +95,7 @@ class RegisterActivity : AppCompatActivity() {
                                 showAlert("Algo no fue bien")
                         }
                     } else {
+                        addUserAPI(nick, email, hometown, true)
                         val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
                         prefs.putString("email", it.result?.user?.email)
                         prefs.apply()
@@ -106,7 +106,7 @@ class RegisterActivity : AppCompatActivity() {
         } catch (e: FirebaseAuthWeakPasswordException) {
             showAlert("Esa contraseña es muy débil.")
         } catch (e: FirebaseAuthInvalidCredentialsException) {
-            showAlert("Eso que has puesto no parece un correo. Pon algo tipo esto@lo-otro.com")
+            showAlert("Eso que has puesto no parece un correo. Pon algo similar a esto@lo-otro.com")
         } catch (e: FirebaseAuthUserCollisionException) {
             showAlert("Ese correo ya tiene una cuenta asociada")
         } catch (e: Exception) {

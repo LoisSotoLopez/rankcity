@@ -27,21 +27,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
-import com.android.volley.Response
 import com.android.volley.toolbox.JsonArrayRequest
-import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.apm2021.rankcity.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.*
-import com.t2r2.volleyexample.FileDataPart
-import com.t2r2.volleyexample.VolleyFileUploadRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
-import org.json.JSONObject
 import java.io.IOException
 import java.lang.reflect.Type
 
