@@ -371,6 +371,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         //super.onBackPressed()
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
         stopChronometer()
+        stopService()
         exitDialog()
     }
 
@@ -387,6 +388,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 dialog, which -> dialog.cancel()
             startChronometer()
             startLocationTracking(isTracking)
+            startService()
         }
         builder.show()
     }
