@@ -17,10 +17,7 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
@@ -60,6 +57,7 @@ class ProfileFragment : Fragment() {
     private var userid = String()
     private var username = String()
     private var town = String()
+    private var progressBar: ProgressBar? = null
 //    private var imgProfile = String()
     private var imageData: ByteArray? = null
     protected val scopeProfile = CoroutineScope(
@@ -77,6 +75,9 @@ class ProfileFragment : Fragment() {
         cameraButton.setOnClickListener {
             dialog()
         }
+
+        progressBar = root.findViewById<ProgressBar>(R.id.progressbarProfile)
+
         val sharedPreferences: SharedPreferences? =
             this.activity?.getSharedPreferences("user_data_file", Context.MODE_PRIVATE)
         if (sharedPreferences != null) {
@@ -117,6 +118,7 @@ class ProfileFragment : Fragment() {
                 // set the custom adapter to the RecyclerView
                 adapter = ProfileAdapter(it)
             }
+            progressBar?.visibility = View.GONE
         })
         //}
     }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,13 +21,17 @@ class LeaderboardFragment : Fragment() {
 
     private lateinit var leaderboardViewModel: LeaderboardViewModel
     private var mranking = MutableLiveData<ArrayList<UserRanking>>()
+    private var progressBar: ProgressBar? = null
 
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_leaderboard, container, false)
+        val root = inflater.inflate(R.layout.fragment_leaderboard, container, false)
+        progressBar = root.findViewById<ProgressBar>(R.id.progressbarLeaderboard)
+
+        return root
     }
 
     override fun onViewCreated(itemView: View, savedInstanceState: Bundle?) {
@@ -45,6 +50,7 @@ class LeaderboardFragment : Fragment() {
                 // set the custom adapter to the RecyclerView
                 adapter = LeaderboardAdapter(it)
             }
+            progressBar?.visibility = View.GONE
         })
 //        //GlobalScope.launch {
 //            recyclerView.apply {

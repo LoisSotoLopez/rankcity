@@ -19,6 +19,7 @@
         tools:context=".MapsActivity"
         tools:layout_editor_absoluteX="0dp" />
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/tableLayout"
         android:layout_width="match_parent"
