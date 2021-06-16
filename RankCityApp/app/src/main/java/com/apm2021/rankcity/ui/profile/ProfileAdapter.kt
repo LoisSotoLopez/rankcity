@@ -12,11 +12,13 @@ class ProfileAdapter(val routesList: ArrayList<Route>) :
 
     // Describes an item view and its place within the RecyclerView
     class ProfileViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val titleTextView: TextView = itemView.findViewById(R.id.card_user_date)
+        private val titleTextView: TextView = itemView.findViewById(R.id.card_user_nameroute)
+        private val dateTextView: TextView = itemView.findViewById(R.id.card_user_date)
         private val scoreTextView: TextView = itemView.findViewById(R.id.card_user_score)
 
-        fun bind(title: String, score: Int) {
+        fun bind(title: String, date: String, score: Int) {
             titleTextView.text = title
+            dateTextView.text = date.split(" ")[0]
             scoreTextView.text = score.toString()
         }
     }
@@ -36,6 +38,6 @@ class ProfileAdapter(val routesList: ArrayList<Route>) :
 
     // Displays data at a certain position
     override fun onBindViewHolder(holder: ProfileViewHolder, position: Int) {
-        holder.bind(routesList[position].title, routesList[position].score)
+        holder.bind(routesList[position].title, routesList[position].date, routesList[position].score)
     }
 }

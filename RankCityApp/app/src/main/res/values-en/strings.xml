@@ -2,7 +2,7 @@
     <string name="prefs_file">com.apm2021.rankcity.PREFERENCE_FILE_KEY</string>
     <string name="app_name">RankCity</string>
     <string name="title_home">Home</string>
-    <string name="title_leaderboard">Leaderboard</string>
+    <string name="title_leaderboard">Global Ranking</string>
     <string name="title_profile">Profile</string>
     <string name="user_email_input_placeholder">Email</string>
     <string name="user_name_input_placeholder">Username</string>
@@ -38,6 +38,11 @@
     <string name="cancelEULA">Cancel</string>
     <string name="card_user_nameroute">Route</string>
     <string name="card_user_date">Date</string>
+    <string name="icon_route">Icon Route</string>
+    <string name="header_name_route">Route</string>
+    <string name="header_date">Date</string>
+    <string name="header_score">Score</string>
+    <string name="header_name_user">Username</string>
 
 
     <string-array name="users_array">
