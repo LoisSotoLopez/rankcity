@@ -106,15 +106,15 @@ class LoginActivity : AppCompatActivity() {
 
     private fun getUserFrom_API(userid: String) {
         val requestQueue = Volley.newRequestQueue(this)
-        val userid_aux = userid.split("@")[0]
-        val url = "https://rankcity-app.herokuapp.com/users/$userid_aux"
-//        val url = "http://192.168.1.74:5000/users/$userid_aux"
+//        val userid_aux = userid.split("@")[0]
+        val url = "https://rankcity-app.herokuapp.com/users/$userid"
+//        val url = "http://192.168.1.38:5000/users/$userid"
         val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
             { response ->
 //                println("RESPONSEEEEEEEEEEEEEE"+response)
                 val sharedPreferences: SharedPreferences = this.getSharedPreferences("user_data_file", Context.MODE_PRIVATE)
                 val editor: SharedPreferences.Editor = sharedPreferences.edit()
-                editor.putString("userId", response.getString("username"))
+                editor.putString("username", response.getString("username"))
                 editor.putString("email", response.getString("email"))
 //                editor.putString("town", response.getString("town"))
                 editor.putBoolean("accept_eula", response.getBoolean("accept_eula"))
