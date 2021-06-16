@@ -11,8 +11,8 @@ migrate = Migrate(app, db)
 class UserModel(db.Model):
     __tablename__ = 'user'
 
-    username = db.Column(db.String(), primary_key=True)
-    email = db.Column(db.String())
+    username = db.Column(db.String())
+    email = db.Column(db.String(), primary_key=True)
     town = db.Column(db.String())
     accept_eula = db.Column(db.Boolean())
     # image = db.Column(db.LargeBinary(length=2048))
@@ -26,7 +26,7 @@ class UserModel(db.Model):
         self.image = image
 
     def __repr__(self):
-        return f"<User {self.username}>"
+        return f"<User {self.email}>"
 
 
 class RouteModel(db.Model):
@@ -36,7 +36,7 @@ class RouteModel(db.Model):
     title = db.Column(db.String())
     date = db.Column(db.String())
     time = db.Column(db.String())
-    user = db.Column(db.String(), db.ForeignKey('user.username'))
+    user = db.Column(db.String(), db.ForeignKey('user.email'))
     score = db.Column(db.Float())
 
     def __init__(self, title, date, time, user, score):
@@ -156,7 +156,7 @@ def get_routes_user(user_id):
     user = UserModel.query.get_or_404(user_id)
 
     if request.method == 'GET':
-        routes = RouteModel.query.filter_by(user=user.username).all()
+        routes = RouteModel.query.filter_by(user=user.email).all()
         results = [
             {
                 "id": route.id,
@@ -186,7 +186,7 @@ def get_routes_user(user_id):
         if request.is_json:
             data = request.get_json()
             new_route = RouteModel(title=data['title'], date=data['date'], time=data['time'],
-                                 user=user.username, score=data['score'])
+                                 user=user.email, score=data['score'])
             db.session.add(new_route)
             db.session.commit()
             for street in data['streets']:
@@ -259,15 +259,19 @@ def handle_user(user_id):
         # user.email = data['email']
         # user.town = data['town']
         # user.accept_eula = data['accept_eula']
-        user.image = data['image']
+        image = data['image']
+        # f = open('./image'+user.username+'.jpg', 'wb')
+        # f.write(image)
+        # f.close()
+        user.image = str(image)
         db.session.add(user)
         db.session.commit()
-        return {"message": f"User {user.username} successfully updated"}
+        return {"message": f"User {user.email} successfully updated"}
 
     elif request.method == 'DELETE':
         db.session.delete(user)
         db.session.commit()
-        return {"message": f"User {user.username} successfully deleted."}
+        return {"message": f"User {user.email} successfully deleted."}
 
 
 @app.route('/streets', methods=['POST', 'GET'])
@@ -323,7 +327,7 @@ def get_ranking():
         users = UserModel.query.all()
         results = []
         for user in users:
-            routes = RouteModel.query.filter_by(user=user.username)
+            routes = RouteModel.query.filter_by(user=user.email)
             total_score = 0
             for route in routes:
                 total_score = total_score + route.score

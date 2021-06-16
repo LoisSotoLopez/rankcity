@@ -42,7 +42,7 @@ class InfoActivity : AppCompatActivity() {
         //val screenshot = intent.getParcelableExtra<Parcelable>("screenshot") as Bitmap?
         val sharedPreferences: SharedPreferences =
             this.getSharedPreferences("user_data_file", MODE_PRIVATE)
-        val userId = sharedPreferences.getString("userId","").toString()
+        val userId = sharedPreferences.getString("email","").toString()
         val streets =  JSONArray(getIntent().getStringExtra("addresses_score"));
         val byteArray = bundle?.getByteArray("byteArray")
         val bitmap = byteArray?.toBitmap()
@@ -84,7 +84,7 @@ class InfoActivity : AppCompatActivity() {
         // Instantiate the RequestQueue.
         val queue = Volley.newRequestQueue(this)
         val url = "https://rankcity-app.herokuapp.com/routes/user/"+userId
-//        val url = "http://192.168.1.74:5000/routes/user/"+userId
+//        val url = "http://192.168.1.38:5000/routes/user/"+userId
 
         // TODO generar random ids
         val jsonObject = JSONObject()

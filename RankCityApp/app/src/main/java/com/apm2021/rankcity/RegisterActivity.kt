@@ -118,7 +118,7 @@ class RegisterActivity : AppCompatActivity() {
         // Instantiate the RequestQueue.
         val queue = Volley.newRequestQueue(this)
         val url = "https://rankcity-app.herokuapp.com/users"
-//        val url = "http://192.168.1.74:5000/users"
+//        val url = "http://192.168.1.38:5000/users"
 
         val jsonObject = JSONObject()
         jsonObject.put("username", username)
@@ -132,7 +132,7 @@ class RegisterActivity : AppCompatActivity() {
                 response ->
             val sharedPreferences: SharedPreferences = this.getSharedPreferences("user_data_file", MODE_PRIVATE)
             val editor: SharedPreferences.Editor = sharedPreferences.edit()
-            editor.putString("userId", response.getString("username"))
+            editor.putString("username", response.getString("username"))
             editor.putString("email", response.getString("email"))
             editor.putString("town", response.getString("town"))
             editor.putBoolean("accept_eula", response.getBoolean("accept_eula"))
@@ -143,37 +143,6 @@ class RegisterActivity : AppCompatActivity() {
         // Add the request to the RequestQueue.
         queue.add(jsonRequest)
     }
-
-
-    private fun postUser(userid: String) : Boolean{
-        val conn = URL("http://localhost:5000/users/" + userid).openConnection() as HttpURLConnection
-        conn.requestMethod = "POST"
-        conn.connectTimeout = 300000
-        conn.doOutput = true
-
-        val message = " {\n" +
-                "                \"username\": " + userid +",\n" +
-                "                \"name\": " + userid +",\n" +
-                "                \"email\": " + userid +"\n" +
-                "            }"
-        val postData: ByteArray =
-            message.toByteArray(Charset.forName("UTF-8"))
-
-        conn.setRequestProperty("charset", "utf-8")
-        conn.setRequestProperty("Content-length", postData.size.toString())
-        conn.setRequestProperty("Content-Type", "application/json")
-
-        try {
-            val outputStream: DataOutputStream = DataOutputStream(conn.outputStream)
-            outputStream.write(postData)
-            outputStream.flush()
-        } catch (exception: Exception) {
-
-        }
-
-        return (conn.responseCode == HttpURLConnection.HTTP_OK)
-    }
-
 
     override fun onBackPressed() {
         //super.onBackPressed()
