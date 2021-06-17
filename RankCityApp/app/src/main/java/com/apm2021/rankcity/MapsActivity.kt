@@ -253,7 +253,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             json.put("score", 100)
             addresses_score.put(json)
         }
-        else if (currentAddress !in addresses.subList(addressesSize-2, addressesSize)){
+        else if (addressesSize >= 2 && currentAddress !in addresses.subList(addressesSize-2, addressesSize)){
             punctuation += 50
             findViewById<TextView>(R.id.punctuationText).text = punctuation.toString()
             val json = JSONObject()
