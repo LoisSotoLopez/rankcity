@@ -26,32 +26,16 @@ class RouteService : Service() {
         val chrono = intent.getLongExtra("chronometer", 0)
         createNotificationChannel()
         val notificationIntent = Intent(this, MapsActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(
-            this,
-            0, notificationIntent, 0
-        )
-//        val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
-//        val layout: View = inflater.inflate(R.layout.notification_service, null)
-//        val chronometer = layout.findViewById<Chronometer>(R.id.chronometer_notification)
-//        chronometer.start()
+
         val remoteViews = RemoteViews(packageName,R.layout.notification_service)
         remoteViews.setChronometer(R.id.chronometer_notification, chrono, null, true)
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Ruta en progreso")
-//            .setContent(RemoteViews(packageName,R.layout.notification_service))
             .setCustomContentView(remoteViews)
-//            .setContentText(chrono)
             .setSmallIcon(R.drawable.rankcity_logo)
-            .setContentIntent(pendingIntent)
-//            .setUsesChronometer(true)
-//            .setChronometerCountDown(true)
             .build()
         startForeground(1, notification)
 
-        //do heavy work on a background thread
-
-
-        //stopSelf();
         return START_NOT_STICKY
     }
 
