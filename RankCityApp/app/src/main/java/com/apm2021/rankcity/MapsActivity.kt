@@ -56,9 +56,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     var isTracking = true
     var addresses = mutableListOf<String>()
     var addresses_score = JSONArray()
-    private lateinit var main: View
     private lateinit var bitmap: Bitmap
-    private lateinit var byteArray: ByteArray
     private lateinit var file: File
 
     private lateinit var currentDate: String
@@ -67,8 +65,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         theme.applyStyle(R.style.primaryColors, true)
         setContentView(R.layout.activity_maps)
-
-        main = findViewById(R.id.tableLayout)
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -90,9 +86,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             fusedLocationProviderClient.removeLocationUpdates(locationCallback)
             stopChronometer()
             stopButton.visibility = View.GONE
-            bitmap = screenshot(main)
             snapShot()
-            byteArray = bitmap.toByteArray()
             titleRouteDialog()
             stopService()
         }
@@ -353,7 +347,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                             putExtra("time", chronometer.text)
                             putExtra("currentDate", currentDate)
                             putExtra("addresses_score", addresses_score.toString())
-                            putExtra("byteArray", byteArray)
                             putExtra("file", file)
                         }
 
@@ -400,14 +393,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             startService()
         }
         builder.show()
-    }
-
-    private fun screenshot(view: View): Bitmap{
-        view.isDrawingCacheEnabled = true
-        view.buildDrawingCache(true)
-        val bitmap = Bitmap.createBitmap(view.drawingCache)
-        view.isDrawingCacheEnabled = false
-        return bitmap
     }
 
     fun Bitmap.toByteArray():ByteArray{

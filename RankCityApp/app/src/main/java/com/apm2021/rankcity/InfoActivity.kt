@@ -55,7 +55,6 @@ class InfoActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.routeName).text = routeName
         findViewById<TextView>(R.id.punctuation).text = punctuation.toString()
         findViewById<TextView>(R.id.time).text = time
-        findViewById<ImageView>(R.id.screenshot).setImageBitmap(bitmap)
 
 
         // Pulsar boton home nos lleva al inicio de la app
