@@ -116,7 +116,7 @@ class LoginActivity : AppCompatActivity() {
                 val editor: SharedPreferences.Editor = sharedPreferences.edit()
                 editor.putString("username", response.getString("username"))
                 editor.putString("email", response.getString("email"))
-//                editor.putString("town", response.getString("town"))
+                editor.putString("town", response.getString("town"))
                 editor.putBoolean("accept_eula", response.getBoolean("accept_eula"))
                 editor.putString("image", response.getString("image"))
                 editor.apply()
