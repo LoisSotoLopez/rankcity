@@ -48,13 +48,14 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".InfoActivity"
             android:label="Información de ruta"
             android:screenOrientation="portrait" />
         <activity 
-			android:name=".EulaActivity" />
+			android:name=".EulaActivity"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".LoginActivity"
