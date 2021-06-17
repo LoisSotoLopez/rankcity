@@ -44,7 +44,6 @@ import java.util.*
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
-    val REQUEST_PERMISSIONS_REQUEST_CODE = 1234
     var enable_ubication = false
     var firstLocation = true
     var punctuation = 0
@@ -78,6 +77,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         //startChronometer()
         findViewById<TextView>(R.id.punctuationText).text = punctuation.toString()
         fusedLocationProviderClient = FusedLocationProviderClient(this)
+        startLocationTracking(isTracking)
+        startChronometer()
+        startService()
 
         // Pulsar boton stop nos lleva a InfoActivity
         val stopButton = findViewById<Button>(R.id.stopRouteButton) as Button
@@ -91,20 +93,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             stopService()
         }
 
-        startLocationTracking(isTracking)
-        startChronometer()
-        startService()
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        if (!checkPermissions()) {
-            requestPermissions()
-        } else {
-            startLocationTracking(isTracking)
-            startChronometer()
-        }
     }
 
     override fun onRestart() {
@@ -112,32 +100,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val stopButton = findViewById<Button>(R.id.stopRouteButton) as Button
         stopButton.visibility = View.VISIBLE
     }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            REQUEST_PERMISSIONS_REQUEST_CODE -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PERMISSION_GRANTED) {
-                    // Crear peticion de ubicacion
-                    /**getLocation()*/
-                    startLocationTracking(true)
-                    update()
-                } else {
-                    Snackbar.make(
-                        findViewById(R.id.maps_layout), "QUIERO PERMISOS, DAME PERMISOS!!!",
-                        Snackbar.LENGTH_INDEFINITE
-                    ).setAction(
-                        "Permitir",
-                        View.OnClickListener { startLocationPermissionRequest() }).show()
-                }
-            }
-        }
-    }
-
 
     /**
      * Manipulates the map once available.
@@ -174,32 +136,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             mMap.isMyLocationEnabled = true
         }
 
-//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(user, 15.8F))
     }
 
     private fun checkPermissions() =
         ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) == PERMISSION_GRANTED
-
-    private fun startLocationPermissionRequest() {
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(ACCESS_FINE_LOCATION),
-            REQUEST_PERMISSIONS_REQUEST_CODE
-        )
-    }
-
-    private fun requestPermissions() {
-        // Comprueba si lo pediste alguna vez
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, ACCESS_FINE_LOCATION)) {
-            Snackbar.make(
-                findViewById(R.id.maps_layout), "QUIERO PERMISOS, DAME PERMISOS!!!",
-                Snackbar.LENGTH_INDEFINITE
-            ).setAction("Permitir", View.OnClickListener { startLocationPermissionRequest() })
-                .show()
-        } else {
-            startLocationPermissionRequest()
-        }
-    }
 
     private fun printPolyline(latLngs: List<LatLng>){
         val polylineOptions = PolylineOptions()
