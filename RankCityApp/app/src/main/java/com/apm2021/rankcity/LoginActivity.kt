@@ -111,7 +111,6 @@ class LoginActivity : AppCompatActivity() {
 //        val url = "http://192.168.1.38:5000/users/$userid"
         val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
             { response ->
-//                println("RESPONSEEEEEEEEEEEEEE"+response)
                 val sharedPreferences: SharedPreferences = this.getSharedPreferences("user_data_file", Context.MODE_PRIVATE)
                 val editor: SharedPreferences.Editor = sharedPreferences.edit()
                 editor.putString("username", response.getString("username"))
@@ -121,7 +120,12 @@ class LoginActivity : AppCompatActivity() {
                 editor.putString("image", response.getString("image"))
                 editor.apply()
                 editor.commit()
-//                println(sharedPreferences.getString("userId", "holahola"))
+                // Tempora solution image in sharedPrefereneces
+                val sharedPreferencesImage: SharedPreferences = this.getSharedPreferences("user_image", Context.MODE_PRIVATE)
+                val editorImage: SharedPreferences.Editor = sharedPreferencesImage.edit()
+                editorImage.putString("image", "")
+                editorImage.apply()
+                editorImage.commit()
             },
             { error ->
                 // TODO: Handle error

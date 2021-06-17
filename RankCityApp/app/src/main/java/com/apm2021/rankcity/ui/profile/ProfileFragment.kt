@@ -19,6 +19,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
@@ -27,6 +28,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonArrayRequest
+import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.apm2021.rankcity.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -36,6 +38,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
+import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.lang.reflect.Type
 
@@ -80,6 +83,7 @@ class ProfileFragment : Fragment() {
             username = sharedPreferences.getString("username","").toString()
             userid = sharedPreferences.getString("email","").toString()
             town = sharedPreferences.getString("town","").toString()
+//            imageFromShared = sharedPreferences.getString("image","").toString()
         }
         val sharedPreferencesImage: SharedPreferences? =
             this.activity?.getSharedPreferences("user_image", Context.MODE_PRIVATE)
@@ -310,12 +314,14 @@ class ProfileFragment : Fragment() {
             val bitmap = imgPhoto.drawable.toBitmap()
             val imageBase64 = convertImageToBase64(bitmap)
             saveImage(imageBase64)
+//            addUserImageIntoAPI(userid, imageBase64)
         }
         if(resultCode == Activity.RESULT_OK && requestCode == REQUEST_CAMERA){
             imgPhoto.setImageURI(photo)
             val bitmap = imgPhoto.drawable.toBitmap()
             val imageBase64 = convertImageToBase64(bitmap)
             saveImage(imageBase64)
+//            addUserImageIntoAPI(userid, imageBase64)
         }
     }
 
@@ -328,12 +334,6 @@ class ProfileFragment : Fragment() {
     }
 
     private fun saveImage(image: String) {
-//        val sharedPreferences: SharedPreferences =
-//            context?.getSharedPreferences("user_image", Context.MODE_PRIVATE) ?:
-//        val editor: SharedPreferences.Editor = sharedPreferences.edit()
-//        editor.putString("username", response.getString("username"))
-//        editor.apply()
-//        editor.commit()
         val pref = requireActivity().getSharedPreferences("user_image", Context.MODE_PRIVATE)
         val edt = pref.edit()
         edt.putString("image", image)
@@ -341,13 +341,19 @@ class ProfileFragment : Fragment() {
         edt.commit()
     }
 
-//    @Throws(IOException::class)
-//    private fun createImageData(uri: Uri) {
-//        val inputStream = context?.contentResolver?.openInputStream(uri)
-//        inputStream?.buffered()?.use {
-//            imageData = it.readBytes()
-//        }
-//    }
+    private fun addUserImageIntoAPI(userid: String, image: String) {
+        // Instantiate the RequestQueue.
+        val queue = Volley.newRequestQueue(context)
+        val url = "https://rankcity-app.herokuapp.com/users"
+//        val url = "http://192.168.1.38:5000/users/"+userid
+
+        val jsonObject = JSONObject()
+        jsonObject.put("image", image)
+
+        val jsonRequest = JsonObjectRequest(Request.Method.PUT, url, jsonObject, {}, {})
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest)
+    }
 
     //Comprobar si se aceptan permisos
     override fun onRequestPermissionsResult(
