@@ -238,6 +238,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun increasePunctuation(currentAddress: String, addresses: List<String>){
+        val addressesSize = addresses.size
         if (currentAddress !in addresses && currentAddress != null){
             punctuation += 100
             findViewById<TextView>(R.id.punctuationText).text = punctuation.toString()
@@ -246,7 +247,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             json.put("score", 100)
             addresses_score.put(json)
         }
-        else {
+        else if (addressesSize >= 2 && currentAddress !in addresses.subList(addressesSize-2, addressesSize)){
             punctuation += 50
             findViewById<TextView>(R.id.punctuationText).text = punctuation.toString()
             val json = JSONObject()
