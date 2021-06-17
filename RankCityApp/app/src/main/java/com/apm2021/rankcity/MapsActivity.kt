@@ -255,7 +255,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     //Increase punctuation depending on the street
                     if(currentAddress != "Invalid address") {
                         increasePunctuation(currentAddress, addresses)
-                        if (currentAddress != addresses[addresses.size]) {
+                        if (addresses.size == 0 || currentAddress != addresses[addresses.size-1]) {
                             addresses.add(currentAddress)
                         }
                     }
