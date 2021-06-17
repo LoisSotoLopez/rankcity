@@ -20,6 +20,7 @@ import kotlinx.coroutines.*
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.OutputStream
+import java.io.File
 
 
 class InfoActivity : AppCompatActivity() {
@@ -33,7 +34,7 @@ class InfoActivity : AppCompatActivity() {
         theme.applyStyle(R.style.primaryColors, true)
         setContentView(R.layout.activity_info)
 
-        var bundle = intent.extras
+        val bundle = intent.extras
         val routeName = bundle?.getString("routeName")
         val punctuation = bundle?.getInt("punctuation")
         val time = bundle?.getString("time")
@@ -49,6 +50,7 @@ class InfoActivity : AppCompatActivity() {
         scopeMap.launch {
             addRouteAPI(userId, routeName, currentDate, time, punctuation, streets)
         }
+        val file = bundle?.getByteArray("file")
 
         findViewById<TextView>(R.id.routeName).text = routeName
         findViewById<TextView>(R.id.punctuation).text = punctuation.toString()
@@ -60,7 +62,6 @@ class InfoActivity : AppCompatActivity() {
         val homeButton = findViewById<Button>(R.id.buttonBackHome)
         // set on-click listener
         homeButton.setOnClickListener {
-            Toast.makeText(this, "Return to home", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
@@ -68,15 +69,7 @@ class InfoActivity : AppCompatActivity() {
         val shareButton = findViewById<Button>(R.id.buttonShare)
         // set on-click listener
         shareButton.setOnClickListener {
-            val intent = Intent()
-            intent.action = Intent.ACTION_SEND
-            intent.type = "image/jpeg"
-            val uri = bitmap?.let { it1 -> getUri(it1) }
-            intent.putExtra(Intent.EXTRA_STREAM, uri)
-            intent.putExtra(Intent.EXTRA_TEXT, "Información de $routeName")
-            val chooseIntent = Intent.createChooser(intent, "Compartir")
-            startActivity(chooseIntent)
-            Toast.makeText(this, "Share route", Toast.LENGTH_SHORT).show()
+            getUri(routeName)
         }
     }
 
@@ -106,31 +99,19 @@ class InfoActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    override fun onStop() {
-        super.onStop()
-        finish()
-    }
 
     fun ByteArray.toBitmap():Bitmap{
         return BitmapFactory.decodeByteArray(this,0,size)
     }
 
-    private fun getUri(bitmap: Bitmap): Uri? {
-        val values = ContentValues()
-        values.put(MediaStore.Images.Media.TITLE, "title")
-        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-        val uri: Uri? = contentResolver.insert(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            values
-        )
-        val outstream: OutputStream?
-        try {
-            outstream = uri?.let { contentResolver.openOutputStream(it) }
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outstream)
-            outstream?.close()
-        } catch (e: Exception) {
-            System.err.println(e.toString())
-        }
-        return uri
+    private fun getUri(routeName: String?) {
+        val fileSource = File(getExternalFilesDir(null)?.canonicalPath, "map.png")
+
+        val intent = Intent()
+        intent.action = Intent.ACTION_SEND
+        intent.type = "image/png"
+        intent.putExtra(Intent.EXTRA_STREAM, Uri.parse(fileSource.absolutePath))
+        intent.putExtra(Intent.EXTRA_TEXT, routeName)
+        startActivity(Intent.createChooser(intent, "Compartir ruta"))
     }
 }
