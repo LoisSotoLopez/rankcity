@@ -1,6 +1,5 @@
 package com.apm2021.rankcity
 
-import android.content.ContentValues
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -9,7 +8,6 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import java.io.File
 
@@ -20,11 +18,10 @@ class InfoActivity : AppCompatActivity() {
         theme.applyStyle(R.style.primaryColors, true)
         setContentView(R.layout.activity_info)
 
-        var bundle = intent.extras
+        val bundle = intent.extras
         val routeName = bundle?.getString("routeName")
         val punctuation = bundle?.getString("punctuation")
         val time = bundle?.getString("time")
-        val byteArray = bundle?.getByteArray("byteArray")
         val file = bundle?.getByteArray("file")
 
         findViewById<TextView>(R.id.routeName).text = routeName
@@ -37,7 +34,6 @@ class InfoActivity : AppCompatActivity() {
         val homeButton = findViewById<Button>(R.id.buttonBackHome)
         // set on-click listener
         homeButton.setOnClickListener {
-            Toast.makeText(this, "Return to home", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
@@ -45,8 +41,7 @@ class InfoActivity : AppCompatActivity() {
         val shareButton = findViewById<Button>(R.id.buttonShare)
         // set on-click listener
         shareButton.setOnClickListener {
-            getUri()
-            Toast.makeText(this, "Share route", Toast.LENGTH_SHORT).show()
+            getUri(routeName)
         }
     }
 
@@ -61,13 +56,14 @@ class InfoActivity : AppCompatActivity() {
         return BitmapFactory.decodeByteArray(this,0,size)
     }
 
-    private fun getUri() {
+    private fun getUri(routeName: String?) {
         val fileSource = File(getExternalFilesDir(null)?.canonicalPath, "map.png")
 
-        val intent = Intent(Intent.ACTION_SEND)
+        val intent = Intent()
+        intent.action = Intent.ACTION_SEND
         intent.type = "image/png"
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(Intent.EXTRA_STREAM, Uri.parse(fileSource.absolutePath))
-        startActivity(Intent.createChooser(intent, "Compartir"))
+        intent.putExtra(Intent.EXTRA_TEXT, routeName)
+        startActivity(Intent.createChooser(intent, "Compartir ruta"))
     }
 }

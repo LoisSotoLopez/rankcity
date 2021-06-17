@@ -13,10 +13,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.apm2021.rankcity.MainActivity
 import com.apm2021.rankcity.MapsActivity
 import com.apm2021.rankcity.R
-import com.google.android.material.dialog.MaterialDialogs
 
 
 class HomeFragment : Fragment() {

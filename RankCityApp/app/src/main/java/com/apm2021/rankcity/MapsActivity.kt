@@ -71,7 +71,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm")
         val currentDate = sdf.format(Date())
-        Toast.makeText(this, currentDate, Toast.LENGTH_SHORT).show()
         chronometer = findViewById(R.id.chronometer)
         findViewById<TextView>(R.id.punctuationText).text = punctuation.toString()
         fusedLocationProviderClient = FusedLocationProviderClient(this)
@@ -235,7 +234,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n")
                 }
                 strAdd = strReturnedAddress.toString().split(",")[0]
-                Toast.makeText(this, strAdd, Toast.LENGTH_SHORT).show()
                 Log.w("Current loction address", strAdd)
             } else {
                 Log.w("Current loction address", "No Address returned!")
@@ -279,7 +277,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             fusedLocationProviderClient.requestLocationUpdates(
                 request, locationCallback, Looper.getMainLooper()
             )
-            Toast.makeText(this, "Entra", Toast.LENGTH_SHORT).show()
 
         } else {
             fusedLocationProviderClient.removeLocationUpdates(locationCallback)
@@ -349,7 +346,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                         }
 
                         startActivity(intent)
-                        Toast.makeText(this, routeName , Toast.LENGTH_SHORT).show()
                     }else{
                         titleRouteDialog()
                         Toast.makeText(this, "Debes darle un título a la ruta", Toast.LENGTH_SHORT).show()
@@ -407,7 +403,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    fun snapShot(){
+    private fun snapShot(){
         val callback =
             SnapshotReadyCallback { snapshot ->
                 if (snapshot != null) {
