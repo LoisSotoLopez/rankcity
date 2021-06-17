@@ -38,8 +38,6 @@ class LeaderboardFragment : Fragment() {
         super.onViewCreated(itemView, savedInstanceState)
         getRankingFrom_API()
 
-//        val usersList = Datasource_Leaderboard(this).getUsersList()
-
         val recyclerView = itemView.findViewById<RecyclerView>(R.id.recycler_view)
         mranking.observe(viewLifecycleOwner,{
 //            Toast.makeText(context, it[0].toString(), Toast.LENGTH_SHORT).show()
@@ -52,15 +50,6 @@ class LeaderboardFragment : Fragment() {
             }
             progressBar?.visibility = View.GONE
         })
-//        //GlobalScope.launch {
-//            recyclerView.apply {
-//                // set a LinearLayoutManager to handle Android
-//                // RecyclerView behavior
-//                layoutManager = LinearLayoutManager(activity)
-//                // set the custom adapter to the RecyclerView
-//                adapter = LeaderboardAdapter(usersList)
-//            }
-        //}
     }
 
     private fun getRankingFrom_API() = runBlocking {

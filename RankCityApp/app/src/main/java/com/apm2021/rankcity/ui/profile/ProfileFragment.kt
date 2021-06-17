@@ -1,7 +1,6 @@
 package com.apm2021.rankcity.ui.profile
 
 import android.Manifest
-import android.R.attr.data
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.ContentValues
@@ -9,16 +8,19 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,7 +36,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
-import java.io.IOException
+import java.io.ByteArrayOutputStream
 import java.lang.reflect.Type
 
 
@@ -50,6 +52,7 @@ class ProfileFragment : Fragment() {
     private val mutex = Mutex()
     private var userid = String()
     private var username = String()
+    private var imageFromShared = String()
     private var town = String()
     private var progressBar: ProgressBar? = null
     private var imageData: ByteArray? = null
@@ -78,6 +81,11 @@ class ProfileFragment : Fragment() {
             userid = sharedPreferences.getString("email","").toString()
             town = sharedPreferences.getString("town","").toString()
         }
+        val sharedPreferencesImage: SharedPreferences? =
+            this.activity?.getSharedPreferences("user_image", Context.MODE_PRIVATE)
+        if (sharedPreferencesImage != null) {
+            imageFromShared = sharedPreferencesImage.getString("image","").toString()
+        }
         scopeProfile.launch {
             getUserRoutesFrom_API(userid)
         }
@@ -91,6 +99,10 @@ class ProfileFragment : Fragment() {
         val textTownView = requireView().findViewById<View>(R.id.ProfileCityName) as TextView
         textView.text = username
         textTownView.text = town
+        if (imageFromShared != "") {
+            val imgBitmapFromShared = decodeBase64(imageFromShared)
+            imgPhoto.setImageBitmap(imgBitmapFromShared)
+        }
 
         val recyclerView = itemView.findViewById<RecyclerView>(R.id.recycler_view)
         //GlobalScope.launch {
@@ -106,6 +118,12 @@ class ProfileFragment : Fragment() {
             progressBar?.visibility = View.GONE
         })
         //}
+    }
+
+    private fun decodeBase64(input: String?): Bitmap? {
+        val decodedByte = Base64.decode(input, 0)
+        return BitmapFactory
+            .decodeByteArray(decodedByte, 0, decodedByte.size)
     }
 
     private fun getUserRoutesFrom_API(userid: String) = runBlocking {
@@ -289,19 +307,47 @@ class ProfileFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == Activity.RESULT_OK && requestCode == REQUEST_GALLERY){
             imgPhoto.setImageURI(data?.data)
+            val bitmap = imgPhoto.drawable.toBitmap()
+            val imageBase64 = convertImageToBase64(bitmap)
+            saveImage(imageBase64)
         }
         if(resultCode == Activity.RESULT_OK && requestCode == REQUEST_CAMERA){
             imgPhoto.setImageURI(photo)
+            val bitmap = imgPhoto.drawable.toBitmap()
+            val imageBase64 = convertImageToBase64(bitmap)
+            saveImage(imageBase64)
         }
     }
 
-    @Throws(IOException::class)
-    private fun createImageData(uri: Uri) {
-        val inputStream = context?.contentResolver?.openInputStream(uri)
-        inputStream?.buffered()?.use {
-            imageData = it.readBytes()
-        }
+    private fun convertImageToBase64(image: Bitmap): String {
+        val baos = ByteArrayOutputStream()
+        image.compress(Bitmap.CompressFormat.PNG, 100, baos)
+        val b: ByteArray = baos.toByteArray()
+        val imageEncoded: String = Base64.encodeToString(b, Base64.DEFAULT)
+        return imageEncoded
     }
+
+    private fun saveImage(image: String) {
+//        val sharedPreferences: SharedPreferences =
+//            context?.getSharedPreferences("user_image", Context.MODE_PRIVATE) ?:
+//        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+//        editor.putString("username", response.getString("username"))
+//        editor.apply()
+//        editor.commit()
+        val pref = requireActivity().getSharedPreferences("user_image", Context.MODE_PRIVATE)
+        val edt = pref.edit()
+        edt.putString("image", image)
+        edt.apply()
+        edt.commit()
+    }
+
+//    @Throws(IOException::class)
+//    private fun createImageData(uri: Uri) {
+//        val inputStream = context?.contentResolver?.openInputStream(uri)
+//        inputStream?.buffered()?.use {
+//            imageData = it.readBytes()
+//        }
+//    }
 
     //Comprobar si se aceptan permisos
     override fun onRequestPermissionsResult(
