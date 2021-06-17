@@ -1,7 +1,6 @@
 package com.apm2021.rankcity.ui.profile
 
 import android.Manifest
-import android.R.attr.data
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.ContentValues
@@ -9,22 +8,27 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonArrayRequest
+import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.apm2021.rankcity.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -34,7 +38,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
-import java.io.IOException
+import org.json.JSONObject
+import java.io.ByteArrayOutputStream
 import java.lang.reflect.Type
 
 
@@ -50,6 +55,7 @@ class ProfileFragment : Fragment() {
     private val mutex = Mutex()
     private var userid = String()
     private var username = String()
+    private var imageFromShared = String()
     private var town = String()
     private var progressBar: ProgressBar? = null
     private var imageData: ByteArray? = null
@@ -77,6 +83,12 @@ class ProfileFragment : Fragment() {
             username = sharedPreferences.getString("username","").toString()
             userid = sharedPreferences.getString("email","").toString()
             town = sharedPreferences.getString("town","").toString()
+//            imageFromShared = sharedPreferences.getString("image","").toString()
+        }
+        val sharedPreferencesImage: SharedPreferences? =
+            this.activity?.getSharedPreferences("user_image", Context.MODE_PRIVATE)
+        if (sharedPreferencesImage != null) {
+            imageFromShared = sharedPreferencesImage.getString("image","").toString()
         }
         scopeProfile.launch {
             getUserRoutesFrom_API(userid)
@@ -91,6 +103,10 @@ class ProfileFragment : Fragment() {
         val textTownView = requireView().findViewById<View>(R.id.ProfileCityName) as TextView
         textView.text = username
         textTownView.text = town
+        if (imageFromShared != "") {
+            val imgBitmapFromShared = decodeBase64(imageFromShared)
+            imgPhoto.setImageBitmap(imgBitmapFromShared)
+        }
 
         val recyclerView = itemView.findViewById<RecyclerView>(R.id.recycler_view)
         //GlobalScope.launch {
@@ -106,6 +122,12 @@ class ProfileFragment : Fragment() {
             progressBar?.visibility = View.GONE
         })
         //}
+    }
+
+    private fun decodeBase64(input: String?): Bitmap? {
+        val decodedByte = Base64.decode(input, 0)
+        return BitmapFactory
+            .decodeByteArray(decodedByte, 0, decodedByte.size)
     }
 
     private fun getUserRoutesFrom_API(userid: String) = runBlocking {
@@ -289,18 +311,48 @@ class ProfileFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == Activity.RESULT_OK && requestCode == REQUEST_GALLERY){
             imgPhoto.setImageURI(data?.data)
+            val bitmap = imgPhoto.drawable.toBitmap()
+            val imageBase64 = convertImageToBase64(bitmap)
+            saveImage(imageBase64)
+//            addUserImageIntoAPI(userid, imageBase64)
         }
         if(resultCode == Activity.RESULT_OK && requestCode == REQUEST_CAMERA){
             imgPhoto.setImageURI(photo)
+            val bitmap = imgPhoto.drawable.toBitmap()
+            val imageBase64 = convertImageToBase64(bitmap)
+            saveImage(imageBase64)
+//            addUserImageIntoAPI(userid, imageBase64)
         }
     }
 
-    @Throws(IOException::class)
-    private fun createImageData(uri: Uri) {
-        val inputStream = context?.contentResolver?.openInputStream(uri)
-        inputStream?.buffered()?.use {
-            imageData = it.readBytes()
-        }
+    private fun convertImageToBase64(image: Bitmap): String {
+        val baos = ByteArrayOutputStream()
+        image.compress(Bitmap.CompressFormat.PNG, 100, baos)
+        val b: ByteArray = baos.toByteArray()
+        val imageEncoded: String = Base64.encodeToString(b, Base64.DEFAULT)
+        return imageEncoded
+    }
+
+    private fun saveImage(image: String) {
+        val pref = requireActivity().getSharedPreferences("user_image", Context.MODE_PRIVATE)
+        val edt = pref.edit()
+        edt.putString("image", image)
+        edt.apply()
+        edt.commit()
+    }
+
+    private fun addUserImageIntoAPI(userid: String, image: String) {
+        // Instantiate the RequestQueue.
+        val queue = Volley.newRequestQueue(context)
+        val url = "https://rankcity-app.herokuapp.com/users"
+//        val url = "http://192.168.1.38:5000/users/"+userid
+
+        val jsonObject = JSONObject()
+        jsonObject.put("image", image)
+
+        val jsonRequest = JsonObjectRequest(Request.Method.PUT, url, jsonObject, {}, {})
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest)
     }
 
     //Comprobar si se aceptan permisos

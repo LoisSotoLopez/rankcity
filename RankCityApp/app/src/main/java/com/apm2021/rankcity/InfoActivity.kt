@@ -39,8 +39,6 @@ class InfoActivity : AppCompatActivity() {
         val punctuation = bundle?.getInt("punctuation")
         val time = bundle?.getString("time")
         val currentDate = bundle?.getString("currentDate")
-        //val byteArray = bundle?.getByteArray("byteArray")
-        //val screenshot = intent.getParcelableExtra<Parcelable>("screenshot") as Bitmap?
         val sharedPreferences: SharedPreferences =
             this.getSharedPreferences("user_data_file", MODE_PRIVATE)
         val userId = sharedPreferences.getString("email","").toString()
