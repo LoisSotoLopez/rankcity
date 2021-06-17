@@ -40,7 +40,7 @@
     <string name="timeMapFragment">Tiempo</string>
     <string name="title_activity_maps">Mapa</string>
     <string name="title_home">Inicio</string>
-    <string name="title_leaderboard">Ranking global</string>
+    <string name="title_leaderboard">Ranking</string>
     <string name="title_profile">Perfil</string>
     <string name="to_configuration_button">CONFIGURACION</string>
     <string name="to_google_login_button_text">ENTRAR CON GOOGLE</string>
@@ -78,4 +78,5 @@
     <string name="header_date">Fecha</string>
     <string name="header_score">Puntos</string>
     <string name="header_name_user">Usuario</string>
+    <string name="header_leaderboard">Ranking Global</string>
 </resources>

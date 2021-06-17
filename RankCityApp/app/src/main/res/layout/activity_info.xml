@@ -17,8 +17,11 @@
         android:text="@string/endRoute"
         android:textSize="40sp"
         android:textStyle="bold|italic"
-        tools:layout_editor_absoluteY="152dp"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintBottom_toTopOf="@+id/buttonShare"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.27"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="0dp" />
 
     <TextView
         android:id="@+id/routeName"

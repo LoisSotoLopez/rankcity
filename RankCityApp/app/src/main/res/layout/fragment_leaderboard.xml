@@ -8,27 +8,30 @@
     android:background="@color/main_background"
     tools:context=".ui.leaderboard.LeaderboardFragment">
 
-    <!--
+
     <TextView
         android:id="@+id/text_dashboard"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="78dp"
         android:gravity="center"
-        android:text="@string/title_leaderboard"
+        android:text="@string/header_leaderboard"
         android:textColor="@color/black"
+        android:textStyle="bold|italic"
         android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
--->
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header"
         android:layout_width="0dp"
         android:layout_height="30sp"
-        android:layout_marginTop="16dp"
         android:background="@color/input_border"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_dashboard">
 
         <TextView
             android:id="@+id/header_name"
@@ -94,6 +97,26 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/header"
         app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="46dp"
+        android:layout_height="45dp"
+        android:src="@drawable/ic_baseline_emoji_events_24"
+        app:layout_constraintBottom_toBottomOf="@+id/text_dashboard"
+        app:layout_constraintEnd_toStartOf="@+id/text_dashboard"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="46dp"
+        android:layout_height="45dp"
+        android:src="@drawable/ic_baseline_emoji_events_24"
+        app:layout_constraintBottom_toBottomOf="@+id/text_dashboard"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/text_dashboard"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!--    <androidx.recyclerview.widget.RecyclerView-->
     <!--        android:layout_width=""-->
