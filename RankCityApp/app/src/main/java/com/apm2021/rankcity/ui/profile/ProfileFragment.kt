@@ -45,7 +45,6 @@ class ProfileFragment : Fragment() {
     var photo: Uri? = null
     lateinit var imgPhoto: ImageView
     lateinit var cameraButton: FloatingActionButton
-//    private var routes = ArrayList<Route>()
     private var mroutes = MutableLiveData<ArrayList<Route>>()
     private var currentThread: Thread? = null
     private val mutex = Mutex()
@@ -53,7 +52,6 @@ class ProfileFragment : Fragment() {
     private var username = String()
     private var town = String()
     private var progressBar: ProgressBar? = null
-//    private var imgProfile = String()
     private var imageData: ByteArray? = null
     protected val scopeProfile = CoroutineScope(
         Dispatchers.Main
@@ -79,8 +77,6 @@ class ProfileFragment : Fragment() {
             username = sharedPreferences.getString("username","").toString()
             userid = sharedPreferences.getString("email","").toString()
             town = sharedPreferences.getString("town","").toString()
-            val shared_image = sharedPreferences.getString("image","").toString().toByteArray()
-            imageData = shared_image
         }
         scopeProfile.launch {
             getUserRoutesFrom_API(userid)
@@ -95,12 +91,6 @@ class ProfileFragment : Fragment() {
         val textTownView = requireView().findViewById<View>(R.id.ProfileCityName) as TextView
         textView.text = username
         textTownView.text = town
-        val bitmap = imageData?.let { BitmapFactory.decodeByteArray(imageData, 0, it.size) }
-        imgPhoto.setImageBitmap(bitmap)
-//        val datesList = Datasource_Profile(this).getDatesList()
-//        GlobalScope.launch {
-//            getUserRoutesFrom_API(userid)
-//        }
 
         val recyclerView = itemView.findViewById<RecyclerView>(R.id.recycler_view)
         //GlobalScope.launch {
@@ -125,7 +115,6 @@ class ProfileFragment : Fragment() {
         val jsonArrayRequest = JsonArrayRequest(
             Request.Method.GET, url, null,
             { response ->
-//                println("RUTAS"+response)
                 try {
                     val gsonBuilder = GsonBuilder()
                     gsonBuilder.registerTypeAdapter(
@@ -141,11 +130,10 @@ class ProfileFragment : Fragment() {
                     mroutes.postValue(routes)
 
                 } catch (e: Exception) {
-
+                    println("ERROR CREATE ROUTE OBJECT")
                 }
             },
             { error ->
-                // TODO: Handle error
                 println("ERROR API CONECCTION")
             }
         )
@@ -201,7 +189,6 @@ class ProfileFragment : Fragment() {
                     )
                 )
             }
-
             return Route(
                 id,
                 title,
@@ -302,14 +289,9 @@ class ProfileFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == Activity.RESULT_OK && requestCode == REQUEST_GALLERY){
             imgPhoto.setImageURI(data?.data)
-//            photo?.let { createImageData(it) }
-//            addUserImageFromAPI(userid, imageData)
         }
         if(resultCode == Activity.RESULT_OK && requestCode == REQUEST_CAMERA){
             imgPhoto.setImageURI(photo)
-            photo?.let { createImageData(it) }
-//            addUserImageFromAPI(userid, imageData)
-//            uploadImage(userid)
         }
     }
 
@@ -320,43 +302,6 @@ class ProfileFragment : Fragment() {
             imageData = it.readBytes()
         }
     }
-
-//    private fun addUserImageFromAPI(username: String, image: ByteArray?) {
-//        // Instantiate the RequestQueue.
-//        val queue = Volley.newRequestQueue(context)
-////        val url = "https://rankcity-app.herokuapp.com/users"+userid
-//        val url = "http://192.168.1.38:5000/users/"+userid
-//
-//        val jsonObject = JSONObject()
-////        jsonObject.put("username", username)
-//        jsonObject.put("image", image)
-//
-//        val jsonRequest = JsonObjectRequest(Request.Method.PUT, url, jsonObject, {}, {})
-//        // Add the request to the RequestQueue.
-//        queue.add(jsonRequest)
-//    }
-
-//    private fun uploadImage(userid: String) {
-//        val url = "http://192.168.1.38:5000/users/"+userid
-//        imageData?: return
-//        val request = object : VolleyFileUploadRequest(
-//            Request.Method.PUT,
-//            url,
-//            Response.Listener {
-//                println("response is: $it")
-//            },
-//            Response.ErrorListener {
-//                println("error is: $it")
-//            }
-//        ) {
-//            override fun getByteData(): MutableMap<String, FileDataPart> {
-//                var params = HashMap<String, FileDataPart>()
-//                params["imageFile"] = FileDataPart("image", imageData!!, "jpeg")
-//                return params
-//            }
-//        }
-//        Volley.newRequestQueue(context).add(request)
-//    }
 
     //Comprobar si se aceptan permisos
     override fun onRequestPermissionsResult(
