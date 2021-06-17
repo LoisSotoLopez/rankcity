@@ -197,7 +197,7 @@ class LoginActivity : AppCompatActivity() {
 
         // Set up the buttons
         builder.setPositiveButton("Sí") { dialog, i ->
-            finish()
+            finishAffinity()
         }
 
         builder.setNegativeButton("No") { dialog, which ->
